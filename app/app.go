@@ -26,6 +26,11 @@ import (
 	secretdbkeeper "github.com/shunail2029/secretdb/x/secretdb/keeper"
 	secretdbtypes "github.com/shunail2029/secretdb/x/secretdb/types"
   // this line is used by starport scaffolding # 1
+	"path/filepath"
+	"github.com/CosmWasm/wasmd/x/wasm"
+	"github.com/tendermint/tendermint/libs/cli"
+	"github.com/spf13/viper"
+	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 )
 
 const appName = "secretdb"
@@ -42,11 +47,14 @@ var (
 		supply.AppModuleBasic{},
 		secretdb.AppModuleBasic{},
     // this line is used by starport scaffolding # 2
+		distr.AppModuleBasic{},
+		wasm.AppModuleBasic{},
 	)
 
 	maccPerms = map[string][]string{
 		auth.FeeCollectorName:     nil,
 		// this line is used by starport scaffolding # 2.1
+		distr.ModuleName: nil,
 		staking.BondedPoolName:    {supply.Burner, supply.Staking},
 		staking.NotBondedPoolName: {supply.Burner, supply.Staking},
 	}
@@ -80,6 +88,8 @@ type NewApp struct {
 	paramsKeeper   params.Keeper
 	secretdbKeeper secretdbkeeper.Keeper
   // this line is used by starport scaffolding # 3
+		distrKeeper    distr.Keeper
+		wasmKeeper    wasm.Keeper
 	mm *module.Manager
 
 	sm *module.SimulationManager
@@ -105,6 +115,8 @@ func NewInitApp(
     params.StoreKey,
     secretdbtypes.StoreKey,
     // this line is used by starport scaffolding # 5
+		distr.StoreKey,
+		wasm.StoreKey,
   )
 
 	tKeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
@@ -123,6 +135,7 @@ func NewInitApp(
 	app.subspaces[bank.ModuleName] = app.paramsKeeper.Subspace(bank.DefaultParamspace)
 	app.subspaces[staking.ModuleName] = app.paramsKeeper.Subspace(staking.DefaultParamspace)
 	// this line is used by starport scaffolding # 5.1
+		app.subspaces[distr.ModuleName] = app.paramsKeeper.Subspace(distr.DefaultParamspace)
 
 	app.accountKeeper = auth.NewAccountKeeper(
 		app.cdc,
@@ -153,10 +166,15 @@ func NewInitApp(
 	)
 
 	// this line is used by starport scaffolding # 5.2
+		app.distrKeeper = distr.NewKeeper(
+			app.cdc, keys[distr.StoreKey], app.subspaces[distr.ModuleName], &stakingKeeper,
+			app.supplyKeeper, auth.FeeCollectorName, app.ModuleAccountAddrs(),
+		)
 
 	app.stakingKeeper = *stakingKeeper.SetHooks(
 		staking.NewMultiStakingHooks(
 			// this line is used by starport scaffolding # 5.3
+		app.distrKeeper.Hooks(),
 		),
 	)
 
@@ -167,6 +185,20 @@ func NewInitApp(
 	)
 
   // this line is used by starport scaffolding # 4
+type WasmWrapper struct { Wasm wasm.Config `mapstructure:"wasm"`}
+		var wasmRouter = bApp.Router()
+		homeDir := viper.GetString(cli.HomeFlag)
+		wasmDir := filepath.Join(homeDir, "wasm")
+
+		wasmWrap := WasmWrapper{Wasm: wasm.DefaultWasmConfig()}
+		err := viper.Unmarshal(&wasmWrap)
+		if err != nil {
+			panic("error while reading wasm config: " + err.Error())
+		}
+		wasmConfig := wasmWrap.Wasm
+		supportedFeatures := "staking"
+		app.subspaces[wasm.ModuleName] = app.paramsKeeper.Subspace(wasm.DefaultParamspace)
+		app.wasmKeeper = wasm.NewKeeper(app.cdc, keys[wasm.StoreKey], app.subspaces[wasm.ModuleName], app.accountKeeper, app.bankKeeper, app.stakingKeeper, app.distrKeeper, wasmRouter, wasmDir, wasmConfig, supportedFeatures, nil, nil)
 
 	app.mm = module.NewManager(
 		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
@@ -176,15 +208,19 @@ func NewInitApp(
 		secretdb.NewAppModule(app.secretdbKeeper, app.bankKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.accountKeeper, app.supplyKeeper),
     // this line is used by starport scaffolding # 6
+		distr.NewAppModule(app.distrKeeper, app.accountKeeper, app.supplyKeeper, app.stakingKeeper),
+		wasm.NewAppModule(app.wasmKeeper),
 	)
 
 	app.mm.SetOrderEndBlockers(
 		staking.ModuleName,
 		// this line is used by starport scaffolding # 6.1
+		distr.ModuleName,
 	)
 
 	app.mm.SetOrderInitGenesis(
 		// this line is used by starport scaffolding # 6.2
+		distr.ModuleName,
 		staking.ModuleName,
 		auth.ModuleName,
 		bank.ModuleName,
@@ -192,6 +228,7 @@ func NewInitApp(
 		supply.ModuleName,
 		genutil.ModuleName,
     // this line is used by starport scaffolding # 7
+		wasm.ModuleName,
 	)
 
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
