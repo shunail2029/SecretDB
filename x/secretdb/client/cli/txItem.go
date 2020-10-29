@@ -2,7 +2,7 @@ package cli
 
 import (
 	"bufio"
-    
+
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -19,7 +19,7 @@ func GetCmdCreateItem(cdc *codec.Codec) *cobra.Command {
 		Short: "Creates a new item",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			
+
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -33,7 +33,6 @@ func GetCmdCreateItem(cdc *codec.Codec) *cobra.Command {
 	}
 }
 
-
 func GetCmdSetItem(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "set-item [id] ",
@@ -41,7 +40,7 @@ func GetCmdSetItem(cdc *codec.Codec) *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id := args[0]
-			
+
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))

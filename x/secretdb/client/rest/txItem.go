@@ -5,9 +5,9 @@ import (
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/shunail2029/secretdb/x/secretdb/types"
 )
 
@@ -16,8 +16,7 @@ var _ = strconv.Itoa(42)
 
 type createItemRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Creator string `json:"creator"`
-	
+	Creator string       `json:"creator"`
 }
 
 func createItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -37,11 +36,8 @@ func createItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		
-
 		msg := types.NewMsgCreateItem(
 			creator,
-			
 		)
 
 		err = msg.ValidateBasic()
@@ -56,9 +52,8 @@ func createItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 type setItemRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	ID 		string `json:"id"`
-	Creator string `json:"creator"`
-	
+	ID      string       `json:"id"`
+	Creator string       `json:"creator"`
 }
 
 func setItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -78,12 +73,9 @@ func setItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		
-
 		msg := types.NewMsgSetItem(
 			creator,
 			req.ID,
-			
 		)
 
 		err = msg.ValidateBasic()
@@ -98,8 +90,8 @@ func setItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 type deleteItemRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Creator string `json:"creator"`
-	ID 		string `json:"id"`
+	Creator string       `json:"creator"`
+	ID      string       `json:"id"`
 }
 
 func deleteItemHandler(cliCtx context.CLIContext) http.HandlerFunc {

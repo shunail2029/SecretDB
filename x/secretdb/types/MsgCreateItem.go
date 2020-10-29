@@ -9,37 +9,37 @@ import (
 var _ sdk.Msg = &MsgCreateItem{}
 
 type MsgCreateItem struct {
-  ID      string
-  Creator sdk.AccAddress `json:"creator" yaml:"creator"`
+	ID      string
+	Creator sdk.AccAddress `json:"creator" yaml:"creator"`
 }
 
 func NewMsgCreateItem(creator sdk.AccAddress) MsgCreateItem {
-  return MsgCreateItem{
-    ID: uuid.New().String(),
+	return MsgCreateItem{
+		ID:      uuid.New().String(),
 		Creator: creator,
 	}
 }
 
 func (msg MsgCreateItem) Route() string {
-  return RouterKey
+	return RouterKey
 }
 
 func (msg MsgCreateItem) Type() string {
-  return "CreateItem"
+	return "CreateItem"
 }
 
 func (msg MsgCreateItem) GetSigners() []sdk.AccAddress {
-  return []sdk.AccAddress{sdk.AccAddress(msg.Creator)}
+	return []sdk.AccAddress{sdk.AccAddress(msg.Creator)}
 }
 
 func (msg MsgCreateItem) GetSignBytes() []byte {
-  bz := ModuleCdc.MustMarshalJSON(msg)
-  return sdk.MustSortJSON(bz)
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
 }
 
 func (msg MsgCreateItem) ValidateBasic() error {
-  if msg.Creator.Empty() {
-    return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "creator can't be empty")
-  }
-  return nil
+	if msg.Creator.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "creator can't be empty")
+	}
+	return nil
 }

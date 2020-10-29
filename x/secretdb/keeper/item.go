@@ -4,8 +4,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/shunail2029/secretdb/x/secretdb/types"
-    "github.com/cosmos/cosmos-sdk/codec"
 )
 
 // CreateItem creates a item
@@ -83,7 +83,6 @@ func (k Keeper) GetItemOwner(ctx sdk.Context, key string) sdk.AccAddress {
 	}
 	return item.Creator
 }
-
 
 // Check if the key exists in the store
 func (k Keeper) ItemExists(ctx sdk.Context, key string) bool {

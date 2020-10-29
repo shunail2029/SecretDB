@@ -3,7 +3,7 @@ module github.com/shunail2029/secretdb
 go 1.15
 
 require (
-	github.com/CosmWasm/wasmd v0.11.0 // indirect
+	github.com/CosmWasm/wasmd v0.11.0
 	github.com/cosmos/cosmos-sdk v0.39.1
 	github.com/golang/mock v1.4.3 // indirect
 	github.com/google/uuid v1.0.0

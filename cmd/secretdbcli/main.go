@@ -24,7 +24,7 @@ import (
 	"github.com/tendermint/tendermint/libs/cli"
 
 	"github.com/shunail2029/secretdb/app"
-  // this line is used by starport scaffolding # 1
+	// this line is used by starport scaffolding # 1
 	wasmrest "github.com/CosmWasm/wasmd/x/wasm/client/rest"
 )
 
@@ -142,7 +142,7 @@ func registerRoutes(rs *lcd.RestServer) {
 	client.RegisterRoutes(rs.CliCtx, rs.Mux)
 	authrest.RegisterTxRoutes(rs.CliCtx, rs.Mux)
 	app.ModuleBasics.RegisterRESTRoutes(rs.CliCtx, rs.Mux)
-  // this line is used by starport scaffolding # 2
+	// this line is used by starport scaffolding # 2
 	wasmrest.RegisterRoutes(rs.CliCtx, rs.Mux)
 }
 
