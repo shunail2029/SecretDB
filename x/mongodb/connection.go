@@ -7,15 +7,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type MongoDBConnection struct {
+// Connection ...
+type Connection struct {
 	ctx    context.Context
 	clt    *mongo.Client
 	dbname string
 }
 
-// constructor
-func NewMongoDBConnection() *MongoDBConnection {
-	c := new(MongoDBConnection)
+// NewConnection is a constructor of Connection
+func NewConnection() *Connection {
+	c := new(Connection)
 
 	err := c.connect()
 	if err != nil {
@@ -27,7 +28,7 @@ func NewMongoDBConnection() *MongoDBConnection {
 }
 
 // create connection to local database
-func (c MongoDBConnection) connect() error {
+func (c Connection) connect() error {
 	var err error
 	c.clt, err = mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
@@ -42,11 +43,11 @@ func (c MongoDBConnection) connect() error {
 }
 
 // get database
-func (c MongoDBConnection) db() *mongo.Database {
+func (c Connection) db() *mongo.Database {
 	return c.clt.Database(c.dbname)
 }
 
 // get collection
-func (c MongoDBConnection) collection(name string) *mongo.Collection {
+func (c Connection) collection(name string) *mongo.Collection {
 	return c.db().Collection(name)
 }

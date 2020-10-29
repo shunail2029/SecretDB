@@ -5,35 +5,45 @@ import (
 )
 
 const (
-	ITEM_COLLECTION = "items"
+	itemCollection = "items"
 )
 
-// store one item
-func storeItem(c *MongoDBConnection, document interface{}) (*mongo.InsertOneResult, error) {
-	return c.collection(ITEM_COLLECTION).InsertOne(c.ctx, document)
+// StoreItem stores one item
+func StoreItem(c *Connection, document interface{}) (*mongo.InsertOneResult, error) {
+	return c.collection(itemCollection).InsertOne(c.ctx, document)
 }
 
-// store some items
-func storeItems(c *MongoDBConnection, documents []interface{}) (*mongo.InsertManyResult, error) {
-	return c.collection(ITEM_COLLECTION).InsertMany(c.ctx, documents)
+// StoreItems stores some items
+func StoreItems(c *Connection, documents []interface{}) (*mongo.InsertManyResult, error) {
+	return c.collection(itemCollection).InsertMany(c.ctx, documents)
 }
 
-// get one item
-func getItem(c *MongoDBConnection, filter interface{}) *mongo.SingleResult {
-	return c.collection(ITEM_COLLECTION).FindOne(c.ctx, filter)
+// GetItem gets one item
+func GetItem(c *Connection, filter interface{}) *mongo.SingleResult {
+	return c.collection(itemCollection).FindOne(c.ctx, filter)
 }
 
-// get some items
-func getItems(c *MongoDBConnection, filter interface{}) (*mongo.Cursor, error) {
-	return c.collection(ITEM_COLLECTION).Find(c.ctx, filter)
+// GetItems gets some items
+func GetItems(c *Connection, filter interface{}) (*mongo.Cursor, error) {
+	return c.collection(itemCollection).Find(c.ctx, filter)
 }
 
-// delete one item
-func deleteItem(c *MongoDBConnection, filter interface{}) (*mongo.DeleteResult, error) {
-	return c.collection(ITEM_COLLECTION).DeleteOne(c.ctx, filter)
+// SetItem updates one item
+func SetItem(c *Connection, filter interface{}, update interface{}) (*mongo.UpdateResult, error) {
+	return c.collection(itemCollection).UpdateOne(c.ctx, filter, update)
 }
 
-// delete some items
-func deleteItems(c *MongoDBConnection, filter interface{}) (*mongo.DeleteResult, error) {
-	return c.collection(ITEM_COLLECTION).DeleteMany(c.ctx, filter)
+// SetItems updates some items
+func SetItems(c *Connection, filter interface{}, update interface{}) (*mongo.UpdateResult, error) {
+	return c.collection(itemCollection).UpdateMany(c.ctx, filter, update)
+}
+
+// DeleteItem deletes one item
+func DeleteItem(c *Connection, filter interface{}) (*mongo.DeleteResult, error) {
+	return c.collection(itemCollection).DeleteOne(c.ctx, filter)
+}
+
+// DeleteItems deletes some items
+func DeleteItems(c *Connection, filter interface{}) (*mongo.DeleteResult, error) {
+	return c.collection(itemCollection).DeleteMany(c.ctx, filter)
 }
