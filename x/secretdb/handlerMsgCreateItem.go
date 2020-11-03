@@ -1,6 +1,9 @@
 package secretdb
 
 import (
+	"encoding/json"
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/shunail2029/secretdb/x/secretdb/keeper"
@@ -8,13 +11,19 @@ import (
 )
 
 // Handle a message to create item
-// TODO: use return value of CreateItem
 func handleMsgCreateItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgCreateItem) (*sdk.Result, error) {
 	var item = types.Item{
 		Owner: msg.Owner,
 		Data:  msg.Data,
 	}
-	k.CreateItem(ctx, item)
+	res, err := k.CreateItem(item)
+	if err != nil {
+		return nil, err
+	}
 
-	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
+	log, _ := json.Marshal(res)
+	return &sdk.Result{
+		Log:    fmt.Sprintf("%s", string(log)),
+		Events: ctx.EventManager().Events(),
+	}, nil
 }
