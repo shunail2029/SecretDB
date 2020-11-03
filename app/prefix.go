@@ -5,17 +5,24 @@ import (
 )
 
 const (
+	// AccountAddressPrefix shows prefix of account's address
 	AccountAddressPrefix = "cosmos"
 )
 
 var (
-	AccountPubKeyPrefix    = AccountAddressPrefix + "pub"
+	// AccountPubKeyPrefix shows prefix of pubkey
+	AccountPubKeyPrefix = AccountAddressPrefix + "pub"
+	// ValidatorAddressPrefix shows prefix of validator's address
 	ValidatorAddressPrefix = AccountAddressPrefix + "valoper"
-	ValidatorPubKeyPrefix  = AccountAddressPrefix + "valoperpub"
-	ConsNodeAddressPrefix  = AccountAddressPrefix + "valcons"
-	ConsNodePubKeyPrefix   = AccountAddressPrefix + "valconspub"
+	// ValidatorPubKeyPrefix shows prefix of validator's pubkey
+	ValidatorPubKeyPrefix = AccountAddressPrefix + "valoperpub"
+	// ConsNodeAddressPrefix ...
+	ConsNodeAddressPrefix = AccountAddressPrefix + "valcons"
+	// ConsNodePubKeyPrefix ...
+	ConsNodePubKeyPrefix = AccountAddressPrefix + "valconspub"
 )
 
+// SetConfig ...
 func SetConfig() {
 	config := sdk.GetConfig()
 	config.SetBech32PrefixForAccount(AccountAddressPrefix, AccountPubKeyPrefix)

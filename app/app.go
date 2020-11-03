@@ -5,6 +5,8 @@ import (
 	"io"
 	"os"
 
+	"github.com/shunail2029/secretdb/x/mongodb"
+
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -38,9 +40,12 @@ import (
 const appName = "secretdb"
 
 var (
-	DefaultCLIHome  = os.ExpandEnv("$HOME/.secretdbcli")
+	// DefaultCLIHome shows path to home directory of CLI
+	DefaultCLIHome = os.ExpandEnv("$HOME/.secretdbcli")
+	// DefaultNodeHome show path to home directory of Node
 	DefaultNodeHome = os.ExpandEnv("$HOME/.secretdbd")
-	ModuleBasics    = module.NewBasicManager(
+	// ModuleBasics ...
+	ModuleBasics = module.NewBasicManager(
 		genutil.AppModuleBasic{},
 		auth.AppModuleBasic{},
 		bank.AppModuleBasic{},
@@ -62,6 +67,7 @@ var (
 	}
 )
 
+// MakeCodec ...
 func MakeCodec() *codec.Codec {
 	var cdc = codec.New()
 
@@ -72,6 +78,7 @@ func MakeCodec() *codec.Codec {
 	return cdc.Seal()
 }
 
+// NewApp ...
 type NewApp struct {
 	*bam.BaseApp
 	cdc *codec.Codec
@@ -99,6 +106,7 @@ type NewApp struct {
 
 var _ simapp.App = (*NewApp)(nil)
 
+// NewInitApp ...
 func NewInitApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool,
 	invCheckPeriod uint, baseAppOptions ...func(*bam.BaseApp),
@@ -180,10 +188,14 @@ func NewInitApp(
 		),
 	)
 
+	conn := mongodb.NewConnection()
+	if conn == nil {
+		panic("cannot connect to local mongodb")
+	}
 	app.secretdbKeeper = secretdbkeeper.NewKeeper(
 		app.bankKeeper,
 		app.cdc,
-		keys[secretdbtypes.StoreKey],
+		conn,
 	)
 
 	// this line is used by starport scaffolding # 4
@@ -262,12 +274,15 @@ func NewInitApp(
 	return app
 }
 
+// GenesisState ...
 type GenesisState map[string]json.RawMessage
 
+// NewDefaultGenesisState ...
 func NewDefaultGenesisState() GenesisState {
 	return ModuleBasics.DefaultGenesis()
 }
 
+// InitChainer ...
 func (app *NewApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState simapp.GenesisState
 
@@ -276,18 +291,22 @@ func (app *NewApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.
 	return app.mm.InitGenesis(ctx, genesisState)
 }
 
+// BeginBlocker ...
 func (app *NewApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
 	return app.mm.BeginBlock(ctx, req)
 }
 
+// EndBlocker ...
 func (app *NewApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	return app.mm.EndBlock(ctx, req)
 }
 
+// LoadHeight ...
 func (app *NewApp) LoadHeight(height int64) error {
 	return app.LoadVersion(height, app.keys[bam.MainStoreKey])
 }
 
+// ModuleAccountAddrs ...
 func (app *NewApp) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
@@ -297,14 +316,17 @@ func (app *NewApp) ModuleAccountAddrs() map[string]bool {
 	return modAccAddrs
 }
 
+// Codec ...
 func (app *NewApp) Codec() *codec.Codec {
 	return app.cdc
 }
 
+// SimulationManager ...
 func (app *NewApp) SimulationManager() *module.SimulationManager {
 	return app.sm
 }
 
+// GetMaccPerms ...
 func GetMaccPerms() map[string][]string {
 	modAccPerms := make(map[string][]string)
 	for k, v := range maccPerms {

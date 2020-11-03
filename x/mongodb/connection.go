@@ -15,6 +15,7 @@ type Connection struct {
 }
 
 // NewConnection is a constructor of Connection
+// TODO: enable to change URL of local MongoDB
 func NewConnection() *Connection {
 	c := new(Connection)
 
