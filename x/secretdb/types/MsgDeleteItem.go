@@ -3,42 +3,50 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var _ sdk.Msg = &MsgDeleteItem{}
 
+// MsgDeleteItem is a message type to delete item
 type MsgDeleteItem struct {
-	ID      string         `json:"id" yaml:"id"`
-	Creator sdk.AccAddress `json:"creator" yaml:"creator"`
+	Owner  sdk.AccAddress `json:"owner" yaml:"owner"`
+	Filter bson.D         `json:"filter" yaml:"filter"`
 }
 
-func NewMsgDeleteItem(id string, creator sdk.AccAddress) MsgDeleteItem {
+// NewMsgDeleteItem returns new MsgDeleteItem
+func NewMsgDeleteItem(owner sdk.AccAddress, filter bson.D) MsgDeleteItem {
 	return MsgDeleteItem{
-		ID:      id,
-		Creator: creator,
+		Owner:  owner,
+		Filter: filter,
 	}
 }
 
+// Route ...
 func (msg MsgDeleteItem) Route() string {
 	return RouterKey
 }
 
+// Type ...
 func (msg MsgDeleteItem) Type() string {
 	return "DeleteItem"
 }
 
+// GetSigners ...
 func (msg MsgDeleteItem) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{sdk.AccAddress(msg.Creator)}
+	return []sdk.AccAddress{sdk.AccAddress(msg.Owner)}
 }
 
+// GetSignBytes ...
 func (msg MsgDeleteItem) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
+// ValidateBasic ...
 func (msg MsgDeleteItem) ValidateBasic() error {
-	if msg.Creator.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "creator can't be empty")
+	if msg.Owner.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "owner can't be empty")
 	}
 	return nil
 }

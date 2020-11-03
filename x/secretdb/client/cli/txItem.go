@@ -2,8 +2,10 @@ package cli
 
 import (
 	"bufio"
+	"unsafe"
 
 	"github.com/spf13/cobra"
+	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -13,18 +15,24 @@ import (
 	"github.com/shunail2029/secretdb/x/secretdb/types"
 )
 
+// GetCmdCreateItem ...
 func GetCmdCreateItem(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "create-item",
+		Use:   "create-item [data]",
 		Short: "Creates a new item",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			var data bson.M
+			err := bson.Unmarshal(*(*[]byte)(unsafe.Pointer(&args[0])), &data)
+			if err != nil {
+				return err
+			}
 
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			msg := types.NewMsgCreateItem(cliCtx.GetFromAddress())
-			err := msg.ValidateBasic()
+			msg := types.NewMsgCreateItem(cliCtx.GetFromAddress(), data)
+			err = msg.ValidateBasic()
 			if err != nil {
 				return err
 			}
@@ -33,19 +41,29 @@ func GetCmdCreateItem(cdc *codec.Codec) *cobra.Command {
 	}
 }
 
+// GetCmdSetItem ...
 func GetCmdSetItem(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "set-item [id] ",
+		Use:   "set-item [filter] [update] ",
 		Short: "Set a new item",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id := args[0]
+			var filter bson.D
+			err := bson.Unmarshal(*(*[]byte)(unsafe.Pointer(&args[0])), &filter)
+			if err != nil {
+				return err
+			}
+			var update bson.D
+			err = bson.Unmarshal(*(*[]byte)(unsafe.Pointer(&args[1])), &update)
+			if err != nil {
+				return err
+			}
 
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			msg := types.NewMsgSetItem(cliCtx.GetFromAddress(), id)
-			err := msg.ValidateBasic()
+			msg := types.NewMsgSetItem(cliCtx.GetFromAddress(), filter, update)
+			err = msg.ValidateBasic()
 			if err != nil {
 				return err
 			}
@@ -54,19 +72,25 @@ func GetCmdSetItem(cdc *codec.Codec) *cobra.Command {
 	}
 }
 
+// GetCmdDeleteItem ...
 func GetCmdDeleteItem(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "delete-item [id]",
-		Short: "Delete a new item by ID",
+		Use:   "delete-item [filter]",
+		Short: "Delete a item by Filter",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			var filter bson.D
+			err := bson.Unmarshal(*(*[]byte)(unsafe.Pointer(&args[0])), &filter)
+			if err != nil {
+				return err
+			}
 
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			msg := types.NewMsgDeleteItem(args[0], cliCtx.GetFromAddress())
-			err := msg.ValidateBasic()
+			msg := types.NewMsgDeleteItem(cliCtx.GetFromAddress(), filter)
+			err = msg.ValidateBasic()
 			if err != nil {
 				return err
 			}

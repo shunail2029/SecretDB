@@ -77,8 +77,6 @@ type AppModule struct {
 
 	keeper     keeper.Keeper
 	coinKeeper bank.Keeper
-	// TODO: Add keepers that your application depends on
-
 }
 
 // NewAppModule creates a new AppModule object
@@ -87,7 +85,6 @@ func NewAppModule(k keeper.Keeper, bankKeeper bank.Keeper) AppModule {
 		AppModuleBasic: AppModuleBasic{},
 		keeper:         k,
 		coinKeeper:     bankKeeper,
-		// TODO: Add keepers that your application depends on
 	}
 }
 

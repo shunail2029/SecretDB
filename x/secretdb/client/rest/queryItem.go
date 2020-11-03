@@ -9,23 +9,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func listItemHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/list-item", storeName), nil)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
-			return
-		}
-		rest.PostProcessResponse(w, cliCtx, res)
-	}
-}
-
 func getItemHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		key := vars["key"]
+		filter := vars["filter"]
 
-		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/get-item/%s", storeName, key), nil)
+		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/get-item/%s", storeName, filter), nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
 			return

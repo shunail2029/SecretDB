@@ -9,7 +9,8 @@ type StoreItemResult struct {
 
 // GetItemResult contains result of GetItem/GetItems
 type GetItemResult struct {
-	data bson.M
+	GotItemCount int64
+	Data         []bson.M
 }
 
 // SetItemResult contains result of SetItem/SetItems

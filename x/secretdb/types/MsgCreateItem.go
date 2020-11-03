@@ -3,43 +3,50 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var _ sdk.Msg = &MsgCreateItem{}
 
+// MsgCreateItem is a message type to create item
 type MsgCreateItem struct {
-	ID      string
-	Creator sdk.AccAddress `json:"creator" yaml:"creator"`
+	Owner sdk.AccAddress `json:"owner" yaml:"owner"`
+	Data  bson.M         `json:"data" yaml:"data"`
 }
 
-func NewMsgCreateItem(creator sdk.AccAddress) MsgCreateItem {
+// NewMsgCreateItem returns new MsgCreateItem
+func NewMsgCreateItem(owner sdk.AccAddress, data bson.M) MsgCreateItem {
 	return MsgCreateItem{
-		ID:      uuid.New().String(),
-		Creator: creator,
+		Owner: owner,
+		Data:  data,
 	}
 }
 
+// Route ...
 func (msg MsgCreateItem) Route() string {
 	return RouterKey
 }
 
+// Type ...
 func (msg MsgCreateItem) Type() string {
 	return "CreateItem"
 }
 
+// GetSigners ...
 func (msg MsgCreateItem) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{sdk.AccAddress(msg.Creator)}
+	return []sdk.AccAddress{sdk.AccAddress(msg.Owner)}
 }
 
+// GetSignBytes ...
 func (msg MsgCreateItem) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
+// ValidateBasic ...
 func (msg MsgCreateItem) ValidateBasic() error {
-	if msg.Creator.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "creator can't be empty")
+	if msg.Owner.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "owner can't be empty")
 	}
 	return nil
 }

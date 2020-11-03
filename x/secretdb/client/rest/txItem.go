@@ -3,12 +3,14 @@ package rest
 import (
 	"net/http"
 	"strconv"
+	"unsafe"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/shunail2029/secretdb/x/secretdb/types"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Used to not have an error if strconv is unused
@@ -16,7 +18,8 @@ var _ = strconv.Itoa(42)
 
 type createItemRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Creator string       `json:"creator"`
+	Owner   string       `json:"Owner"`
+	Data    string       `json:"Data"`
 }
 
 func createItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -30,14 +33,21 @@ func createItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		if !baseReq.ValidateBasic(w) {
 			return
 		}
-		creator, err := sdk.AccAddressFromBech32(req.Creator)
+		owner, err := sdk.AccAddressFromBech32(req.Owner)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		var data bson.M
+		err = bson.Unmarshal(*(*[]byte)(unsafe.Pointer(&req.Data)), &data)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
 		msg := types.NewMsgCreateItem(
-			creator,
+			owner,
+			data,
 		)
 
 		err = msg.ValidateBasic()
@@ -52,8 +62,9 @@ func createItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 type setItemRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	ID      string       `json:"id"`
-	Creator string       `json:"creator"`
+	Owner   string       `json:"owner"`
+	Filter  string       `json:"filter"`
+	Update  string       `json:"update"`
 }
 
 func setItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -67,15 +78,28 @@ func setItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		if !baseReq.ValidateBasic(w) {
 			return
 		}
-		creator, err := sdk.AccAddressFromBech32(req.Creator)
+		owner, err := sdk.AccAddressFromBech32(req.Owner)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		var filter bson.D
+		err = bson.Unmarshal(*(*[]byte)(unsafe.Pointer(&req.Filter)), &filter)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		var update bson.D
+		err = bson.Unmarshal(*(*[]byte)(unsafe.Pointer(&req.Update)), &update)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
 		msg := types.NewMsgSetItem(
-			creator,
-			req.ID,
+			owner,
+			filter,
+			update,
 		)
 
 		err = msg.ValidateBasic()
@@ -90,8 +114,8 @@ func setItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 type deleteItemRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Creator string       `json:"creator"`
-	ID      string       `json:"id"`
+	Owner   string       `json:"owner"`
+	Filter  string       `json:"filter"`
 }
 
 func deleteItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -105,12 +129,22 @@ func deleteItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		if !baseReq.ValidateBasic(w) {
 			return
 		}
-		creator, err := sdk.AccAddressFromBech32(req.Creator)
+		owner, err := sdk.AccAddressFromBech32(req.Owner)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		msg := types.NewMsgDeleteItem(req.ID, creator)
+		var filter bson.D
+		err = bson.Unmarshal(*(*[]byte)(unsafe.Pointer(&req.Filter)), &filter)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		msg := types.NewMsgDeleteItem(
+			owner,
+			filter,
+		)
 
 		err = msg.ValidateBasic()
 		if err != nil {

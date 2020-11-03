@@ -4,17 +4,18 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/shunail2029/secretdb/x/secretdb/keeper"
 	"github.com/shunail2029/secretdb/x/secretdb/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // NewHandler ...
+// TODO: implement create, set, delete some items message
 func NewHandler(k keeper.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 		switch msg := msg.(type) {
-    // this line is used by starport scaffolding # 1
+		// this line is used by starport scaffolding # 1
 		case types.MsgCreateItem:
 			return handleMsgCreateItem(ctx, k, msg)
 		case types.MsgSetItem:

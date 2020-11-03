@@ -1,4 +1,4 @@
 package types
 
-const QueryListItem = "list-item"
+// QueryGetItem ...
 const QueryGetItem = "get-item"

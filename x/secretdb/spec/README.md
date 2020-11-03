@@ -2,11 +2,11 @@
 
 ## Abstract
 
-<!-- TODO: Create a abstract definition of what this module does, what functionality does it enable and how it can be used. -->
+<!-- FIXME: Create a abstract definition of what this module does, what functionality does it enable and how it can be used. -->
 
 ## Contents
 
-// TODO: Create the below files if they are needed.
+// FIXME: Create the below files if they are needed.
 
 1. **[Concepts](01_concepts.md)**
 2. **[State](02_state.md)**

@@ -1,91 +1,129 @@
 package keeper
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"bytes"
 
-	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/shunail2029/secretdb/x/mongodb"
 	"github.com/shunail2029/secretdb/x/secretdb/types"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // CreateItem creates a item
-func (k Keeper) CreateItem(ctx sdk.Context, item types.Item) {
-	store := ctx.KVStore(k.storeKey)
-	key := []byte(types.ItemPrefix + item.ID)
-	value := k.cdc.MustMarshalBinaryLengthPrefixed(item)
-	store.Set(key, value)
+func (k Keeper) CreateItem(item types.Item) (mongodb.StoreItemResult, error) {
+	data := item.Data
+	data["_owner"] = item.Owner
+	return mongodb.StoreItem(k.Conn, data)
 }
 
 // GetItem returns the item information
-func (k Keeper) GetItem(ctx sdk.Context, key string) (types.Item, error) {
-	store := ctx.KVStore(k.storeKey)
-	var item types.Item
-	byteKey := []byte(types.ItemPrefix + key)
-	err := k.cdc.UnmarshalBinaryLengthPrefixed(store.Get(byteKey), &item)
-	if err != nil {
-		return item, err
-	}
-	return item, nil
+func (k Keeper) GetItem(filter bson.D) (mongodb.GetItemResult, error) {
+	return mongodb.GetItem(k.Conn, filter)
+}
+
+// GetItems returns the item information
+func (k Keeper) GetItems(filter bson.D) (mongodb.GetItemResult, error) {
+	return mongodb.GetItems(k.Conn, filter)
 }
 
 // SetItem sets a item
-func (k Keeper) SetItem(ctx sdk.Context, item types.Item) {
-	itemKey := item.ID
-	store := ctx.KVStore(k.storeKey)
-	bz := k.cdc.MustMarshalBinaryLengthPrefixed(item)
-	key := []byte(types.ItemPrefix + itemKey)
-	store.Set(key, bz)
+func (k Keeper) SetItem(filter bson.D, update bson.D) (mongodb.SetItemResult, error) {
+	return mongodb.SetItem(k.Conn, filter, update)
+}
+
+// SetItems sets some items
+func (k Keeper) SetItems(filter bson.D, update bson.D) (mongodb.SetItemResult, error) {
+	return mongodb.SetItems(k.Conn, filter, update)
 }
 
 // DeleteItem deletes a item
-func (k Keeper) DeleteItem(ctx sdk.Context, key string) {
-	store := ctx.KVStore(k.storeKey)
-	store.Delete([]byte(types.ItemPrefix + key))
+func (k Keeper) DeleteItem(filter bson.D) (mongodb.DeleteItemResult, error) {
+	return mongodb.DeleteItem(k.Conn, filter)
+}
+
+// DeleteItems deletes some items
+func (k Keeper) DeleteItems(filter bson.D) (mongodb.DeleteItemResult, error) {
+	return mongodb.DeleteItems(k.Conn, filter)
 }
 
 //
 // Functions used by querier
 //
 
-func listItem(ctx sdk.Context, k Keeper) ([]byte, error) {
-	var itemList []types.Item
-	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, []byte(types.ItemPrefix))
-	for ; iterator.Valid(); iterator.Next() {
-		var item types.Item
-		k.cdc.MustUnmarshalBinaryLengthPrefixed(store.Get(iterator.Key()), &item)
-		itemList = append(itemList, item)
-	}
-	res := codec.MustMarshalJSONIndent(k.cdc, itemList)
-	return res, nil
-}
-
-func getItem(ctx sdk.Context, path []string, k Keeper) (res []byte, sdkError error) {
-	key := path[0]
-	item, err := k.GetItem(ctx, key)
+// getItem returns the item information
+func getItem(path []string, k Keeper) ([]byte, error) {
+	var filter bson.D // TODO: convert path to filter
+	dbRes, err := mongodb.GetItem(k.Conn, filter)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err = codec.MarshalJSONIndent(k.cdc, item)
+	var res []byte
+	res, err = bson.Marshal(dbRes.Data[0])
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		return nil, err
 	}
-
 	return res, nil
 }
 
-// Get creator of the item
-func (k Keeper) GetItemOwner(ctx sdk.Context, key string) sdk.AccAddress {
-	item, err := k.GetItem(ctx, key)
+// GetItems returns the item information
+func getItems(k Keeper, filter bson.D) ([]byte, error) {
+	dbRes, err := mongodb.GetItems(k.Conn, filter)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return item.Creator
+
+	var res []byte
+	for _, data := range dbRes.Data {
+		res, err = bson.MarshalAppend(res, data)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
-// Check if the key exists in the store
-func (k Keeper) ItemExists(ctx sdk.Context, key string) bool {
-	store := ctx.KVStore(k.storeKey)
-	return store.Has([]byte(types.ItemPrefix + key))
+// GetItemOwner gets owner of the item
+func (k Keeper) GetItemOwner(filter bson.D) sdk.AccAddress {
+	res, err := mongodb.GetItem(k.Conn, filter)
+	if err != nil || res.GotItemCount != 1 {
+		return nil
+	}
+	switch addr := res.Data[0]["_owner"].(type) {
+	case sdk.AccAddress:
+		return addr
+	default:
+		return nil
+	}
+}
+
+// GetItemsOwner gets owner of the items
+// If one owner owns all items, return address of the owner
+func (k Keeper) GetItemsOwner(filter bson.D) sdk.AccAddress {
+	res, err := mongodb.GetItem(k.Conn, filter)
+	if err != nil || res.GotItemCount == 0 {
+		return nil
+	}
+	switch addr := res.Data[0]["_owner"].(type) { // type assertion of res.Data[0]["_owner"]
+	case sdk.AccAddress:
+		for _, data := range res.Data {
+			switch dataAddr := data["_owner"].(type) { // type assertion of data["_owner"]
+			case sdk.AccAddress:
+				if !bytes.Equal(dataAddr, addr) {
+					return nil
+				}
+			default:
+				return nil
+			}
+		}
+		return addr
+	default:
+		return nil
+	}
+}
+
+// ItemExists checks if the key exists in the store
+func (k Keeper) ItemExists(filter bson.D) bool {
+	res, err := mongodb.GetItem(k.Conn, filter)
+	return err == nil && res.GotItemCount > 0
 }
