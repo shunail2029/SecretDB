@@ -2,6 +2,11 @@ package mongodb
 
 import "go.mongodb.org/mongo-driver/bson"
 
+// StoreItemResult contains result of StoreItem/StoreItems
+type StoreItemResult struct {
+	StoredItemCount int64
+}
+
 // GetItemResult contains result of GetItem/GetItems
 type GetItemResult struct {
 	data bson.M
