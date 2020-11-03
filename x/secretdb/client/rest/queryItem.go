@@ -22,3 +22,17 @@ func getItemHandler(cliCtx context.CLIContext, storeName string) http.HandlerFun
 		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }
+
+func getItemsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		filter := vars["filter"]
+
+		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/get-item/%s", storeName, filter), nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
+}

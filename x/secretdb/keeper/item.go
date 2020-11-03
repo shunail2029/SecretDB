@@ -67,7 +67,8 @@ func getItem(path []string, k Keeper) ([]byte, error) {
 }
 
 // GetItems returns the item information
-func getItems(k Keeper, filter bson.D) ([]byte, error) {
+func getItems(path []string, k Keeper) ([]byte, error) {
+	var filter bson.D // TODO: convert path to filter
 	dbRes, err := mongodb.GetItems(k.Conn, filter)
 	if err != nil {
 		return nil, err

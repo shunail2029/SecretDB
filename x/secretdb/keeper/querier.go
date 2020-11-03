@@ -17,6 +17,8 @@ func NewQuerier(k Keeper) sdk.Querier {
 		// this line is used by starport scaffolding # 2
 		case types.QueryGetItem:
 			return getItem(path[1:], k)
+		case types.QueryGetItems:
+			return getItems(path[1:], k)
 		default:
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "unknown secretdb query endpoint")
 		}
