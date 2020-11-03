@@ -10,7 +10,8 @@ import (
 )
 
 // NewHandler ...
-// TODO: implement create, set, delete some items message
+// TODO: change not to check owner, and add owner==address to filter in all handler
+// TODO: add MsgCreateItems to create some items at once
 func NewHandler(k keeper.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
@@ -20,8 +21,12 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			return handleMsgCreateItem(ctx, k, msg)
 		case types.MsgSetItem:
 			return handleMsgSetItem(ctx, k, msg)
+		case types.MsgSetItems:
+			return handleMsgSetItems(ctx, k, msg)
 		case types.MsgDeleteItem:
 			return handleMsgDeleteItem(ctx, k, msg)
+		case types.MsgDeleteItems:
+			return handleMsgDeleteItems(ctx, k, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
