@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/shunail2029/secretdb/x/secretdb/keeper"
@@ -14,12 +13,26 @@ import (
 
 // Handle a message to set some items
 func handleMsgSetItems(ctx sdk.Context, k keeper.Keeper, msg types.MsgSetItems) (*sdk.Result, error) {
+	// if filter has "_owner", change it to msg.Owner, else add "_owner" to filter
+	filter := msg.Filter
+	hasOwner := false
+	for idx := range filter {
+		if filter[idx].Key == "_owner" {
+			filter[idx].Value = msg.Owner
+			hasOwner = true
+			break
+		}
+	}
+	if !hasOwner {
+		filter = append(filter, bson.E{
+			Key:   "_owner",
+			Value: msg.Owner,
+		})
+	}
+
 	if !k.ItemExists(msg.Filter) {
 		filter, _ := bson.Marshal(msg.Filter)
 		return nil, fmt.Errorf("item not found with filter: %s", string(filter)) // XXX: better error might exist
-	}
-	if !msg.Owner.Equals(k.GetItemsOwner(msg.Filter)) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "Incorrect Owner")
 	}
 
 	res, err := k.SetItems(msg.Filter, msg.Update)

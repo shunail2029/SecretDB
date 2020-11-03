@@ -10,7 +10,6 @@ import (
 )
 
 // NewHandler ...
-// TODO: change not to check owner, and add owner==address to filter in all handler
 // TODO: add MsgCreateItems to create some items at once
 func NewHandler(k keeper.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
