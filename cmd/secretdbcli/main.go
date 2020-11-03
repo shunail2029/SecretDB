@@ -37,7 +37,7 @@ func main() {
 
 	app.SetConfig()
 
-	// TODO: setup keybase, viper object, etc. to be passed into
+	// FIXME: setup keybase, viper object, etc. to be passed into
 	// the below functions and eliminate global vars, like we do
 	// with the cdc
 

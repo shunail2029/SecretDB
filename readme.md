@@ -4,7 +4,7 @@
 
 ## Get started
 
-```
+```bash
 starport serve
 ```
 
