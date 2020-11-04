@@ -1,4 +1,4 @@
-module github.com/shunail2029/secretdb
+module github.com/shunail2029/SecretDB
 
 go 1.15
 

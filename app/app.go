@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/shunail2029/secretdb/x/mongodb"
+	"github.com/shunail2029/SecretDB/x/mongodb"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -24,9 +24,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
-	"github.com/shunail2029/secretdb/x/secretdb"
-	secretdbkeeper "github.com/shunail2029/secretdb/x/secretdb/keeper"
-	secretdbtypes "github.com/shunail2029/secretdb/x/secretdb/types"
+	"github.com/shunail2029/SecretDB/x/secretdb"
+	secretdbkeeper "github.com/shunail2029/SecretDB/x/secretdb/keeper"
+	secretdbtypes "github.com/shunail2029/SecretDB/x/secretdb/types"
 
 	// this line is used by starport scaffolding # 1
 	"path/filepath"

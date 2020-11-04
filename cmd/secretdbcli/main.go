@@ -23,7 +23,7 @@ import (
 	"github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/shunail2029/secretdb/app"
+	"github.com/shunail2029/SecretDB/app"
 	// this line is used by starport scaffolding # 1
 	wasmrest "github.com/CosmWasm/wasmd/x/wasm/client/rest"
 )
