@@ -11,7 +11,7 @@ Cosmos SDK を利用して秘匿化ブロックチェーンデータベースを
 ## 構成
 
 ```bash
-.
+secretdb/
 ├── app
 │   ├── app.go
 │   ├── export.go
@@ -62,9 +62,11 @@ Cosmos SDK を利用して秘匿化ブロックチェーンデータベースを
         │       └── txItem.go
         ├── genesis.go
         ├── handler.go : メッセージハンドラ
-        ├── handlerMsgCreateItem.go
         ├── handlerMsgDeleteItem.go
-        ├── handlerMsgSetItem.go
+        ├── handlerMsgDeleteItems.go
+        ├── handlerMsgStoreItem.go
+        ├── handlerMsgUpdateItem.go
+        ├── handlerMsgUpdateItems.go
         ├── keeper : データベースとのやり取りを管理
         │   ├── item.go
         │   ├── keeper.go
@@ -74,9 +76,11 @@ Cosmos SDK を利用して秘匿化ブロックチェーンデータベースを
         ├── spec
         │   └── README.md
         └── types : 構造体等の定義
-            ├── MsgCreateItem.go
             ├── MsgDeleteItem.go
-            ├── MsgSetItem.go
+            ├── MsgDeleteItems.go
+            ├── MsgStoreItem.go
+            ├── MsgUpdateItem.go
+            ├── MsgUpdateItems.go
             ├── TypeItem.go
             ├── codec.go
             ├── errors.go
