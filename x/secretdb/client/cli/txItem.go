@@ -19,7 +19,7 @@ func GetCmdStoreItem(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "store-item [data]",
 		Short: "Stores a new item",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var data bson.M
 			err := bson.Unmarshal([]byte(args[0]), &data)

@@ -43,7 +43,7 @@ func GetCmdGetItems(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			filter := args[0]
 
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s", queryRoute, types.QueryGetItem, filter), nil)
+			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s", queryRoute, types.QueryGetItems, filter), nil)
 			if err != nil {
 				fmt.Printf("could not resolve item %s \n%s\n", filter, err.Error())
 
