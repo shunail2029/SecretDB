@@ -4,8 +4,8 @@ import (
 	"bytes"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/shunail2029/secretdb/x/mongodb"
-	"github.com/shunail2029/secretdb/x/secretdb/types"
+	"github.com/shunail2029/SecretDB/x/mongodb"
+	"github.com/shunail2029/SecretDB/x/secretdb/types"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

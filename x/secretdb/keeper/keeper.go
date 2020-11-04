@@ -3,14 +3,14 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/shunail2029/secretdb/x/mongodb"
+	"github.com/shunail2029/SecretDB/x/mongodb"
 
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/shunail2029/secretdb/x/secretdb/types"
+	"github.com/shunail2029/SecretDB/x/secretdb/types"
 )
 
 // Keeper of the secretdb store

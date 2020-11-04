@@ -7,8 +7,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"go.mongodb.org/mongo-driver/bson"
 
-	"github.com/shunail2029/secretdb/x/secretdb/keeper"
-	"github.com/shunail2029/secretdb/x/secretdb/types"
+	"github.com/shunail2029/SecretDB/x/secretdb/keeper"
+	"github.com/shunail2029/SecretDB/x/secretdb/types"
 )
 
 // Handle a message to delete some items

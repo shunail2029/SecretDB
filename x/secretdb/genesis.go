@@ -2,8 +2,8 @@ package secretdb
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/shunail2029/secretdb/x/secretdb/keeper"
-	"github.com/shunail2029/secretdb/x/secretdb/types"
+	"github.com/shunail2029/SecretDB/x/secretdb/keeper"
+	"github.com/shunail2029/SecretDB/x/secretdb/types"
 	// abci "github.com/tendermint/tendermint/abci/types"
 )
 
