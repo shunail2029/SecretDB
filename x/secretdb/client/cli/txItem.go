@@ -22,7 +22,7 @@ func GetCmdStoreItem(cdc *codec.Codec) *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var data bson.M
-			err := bson.Unmarshal([]byte(args[0]), &data)
+			err := bson.UnmarshalExtJSON([]byte(args[0]), false, &data)
 			if err != nil {
 				return err
 			}
@@ -48,12 +48,12 @@ func GetCmdUpdateItem(cdc *codec.Codec) *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var filter bson.D
-			err := bson.Unmarshal([]byte(args[0]), &filter)
+			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
 			if err != nil {
 				return err
 			}
 			var update bson.D
-			err = bson.Unmarshal([]byte(args[1]), &update)
+			err = bson.UnmarshalExtJSON([]byte(args[1]), true, &update)
 			if err != nil {
 				return err
 			}
@@ -79,12 +79,12 @@ func GetCmdUpdateItems(cdc *codec.Codec) *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var filter bson.D
-			err := bson.Unmarshal([]byte(args[0]), &filter)
+			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
 			if err != nil {
 				return err
 			}
 			var update bson.D
-			err = bson.Unmarshal([]byte(args[1]), &update)
+			err = bson.UnmarshalExtJSON([]byte(args[1]), true, &update)
 			if err != nil {
 				return err
 			}
@@ -110,7 +110,7 @@ func GetCmdDeleteItem(cdc *codec.Codec) *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var filter bson.D
-			err := bson.Unmarshal([]byte(args[0]), &filter)
+			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
 			if err != nil {
 				return err
 			}
@@ -137,7 +137,7 @@ func GetCmdDeleteItems(cdc *codec.Codec) *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var filter bson.D
-			err := bson.Unmarshal([]byte(args[0]), &filter)
+			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
 			if err != nil {
 				return err
 			}

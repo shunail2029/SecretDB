@@ -38,7 +38,7 @@ func storeItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 		var data bson.M
-		err = bson.Unmarshal([]byte(req.Data), &data)
+		err = bson.UnmarshalExtJSON([]byte(req.Data), false, &data)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -83,13 +83,13 @@ func updateItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 		var filter bson.D
-		err = bson.Unmarshal([]byte(req.Filter), &filter)
+		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, &filter)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 		var update bson.D
-		err = bson.Unmarshal([]byte(req.Update), &update)
+		err = bson.UnmarshalExtJSON([]byte(req.Update), true, &update)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -135,13 +135,13 @@ func updateItemsHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 		var filter bson.D
-		err = bson.Unmarshal([]byte(req.Filter), &filter)
+		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, &filter)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 		var update bson.D
-		err = bson.Unmarshal([]byte(req.Update), &update)
+		err = bson.UnmarshalExtJSON([]byte(req.Update), true, &update)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -186,7 +186,7 @@ func deleteItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 		var filter bson.D
-		err = bson.Unmarshal([]byte(req.Filter), &filter)
+		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, &filter)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -230,7 +230,7 @@ func deleteItemsHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 		var filter bson.D
-		err = bson.Unmarshal([]byte(req.Filter), &filter)
+		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, &filter)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

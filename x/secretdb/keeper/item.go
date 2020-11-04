@@ -53,7 +53,7 @@ func (k Keeper) DeleteItems(filter bson.D) (mongodb.DeleteItemResult, error) {
 // getItem returns the item information
 func getItem(path []string, k Keeper) ([]byte, error) {
 	var filter bson.D
-	err := bson.Unmarshal([]byte(path[0]), &filter)
+	err := bson.UnmarshalExtJSON([]byte(path[0]), true, &filter)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func getItem(path []string, k Keeper) ([]byte, error) {
 	}
 
 	var res []byte
-	res, err = bson.Marshal(dbRes.Data[0])
+	res, err = bson.MarshalExtJSON(dbRes.Data[0], true, false)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func getItem(path []string, k Keeper) ([]byte, error) {
 // GetItems returns the item information
 func getItems(path []string, k Keeper) ([]byte, error) {
 	var filter bson.D
-	err := bson.Unmarshal([]byte(path[0]), &filter)
+	err := bson.UnmarshalExtJSON([]byte(path[0]), true, &filter)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func getItems(path []string, k Keeper) ([]byte, error) {
 
 	var res []byte
 	for _, data := range dbRes.Data {
-		res, err = bson.MarshalAppend(res, data)
+		res, err = bson.MarshalExtJSONAppend(res, data, true, false)
 		if err != nil {
 			return nil, err
 		}

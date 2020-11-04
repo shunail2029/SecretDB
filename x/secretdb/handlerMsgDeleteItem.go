@@ -31,7 +31,7 @@ func handleMsgDeleteItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgDeleteIt
 	}
 
 	if !k.ItemExists(msg.Filter) {
-		filter, _ := bson.Marshal(msg.Filter)
+		filter, _ := bson.MarshalExtJSON(msg.Filter, true, false)
 		return nil, fmt.Errorf("item not found with filter: %s", string(filter)) // XXX: better error might exist
 	}
 
