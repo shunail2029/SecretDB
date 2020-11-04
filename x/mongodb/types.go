@@ -13,8 +13,8 @@ type GetItemResult struct {
 	Data         []bson.M `json:"data" yaml:"data"`
 }
 
-// SetItemResult contains result of SetItem/SetItems
-type SetItemResult struct {
+// UpdateItemResult contains result of UpdateItem/UpdateItems
+type UpdateItemResult struct {
 	MatchedCount  int64 `json:"matchedCount" yaml:"matchedCount"`
 	ModifiedCount int64 `json:"modifiedCount" yaml:"modifiedCount"`
 	UpsertedCount int64 `json:"upsertedCount" yaml:"upsertedCount"`

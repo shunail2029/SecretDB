@@ -21,7 +21,6 @@ type Keeper struct {
 }
 
 // NewKeeper creates a secretdb keeper
-// TODO: initialize connection to local mongodb
 func NewKeeper(coinKeeper bank.Keeper, cdc *codec.Codec, conn *mongodb.Connection) Keeper {
 	keeper := Keeper{
 		CoinKeeper: coinKeeper,

@@ -58,26 +58,26 @@ func GetItems(c *Connection, filter interface{}) (GetItemResult, error) {
 	}, nil
 }
 
-// SetItem updates one item
-func SetItem(c *Connection, filter interface{}, update interface{}) (SetItemResult, error) {
+// UpdateItem updates one item
+func UpdateItem(c *Connection, filter interface{}, update interface{}) (UpdateItemResult, error) {
 	res, err := c.collection(itemCollection).UpdateOne(c.ctx, filter, update)
 	if err != nil {
-		return SetItemResult{}, err
+		return UpdateItemResult{}, err
 	}
-	return SetItemResult{
+	return UpdateItemResult{
 		MatchedCount:  res.MatchedCount,
 		ModifiedCount: res.ModifiedCount,
 		UpsertedCount: res.UpsertedCount,
 	}, nil
 }
 
-// SetItems updates some items
-func SetItems(c *Connection, filter interface{}, update interface{}) (SetItemResult, error) {
+// UpdateItems updates some items
+func UpdateItems(c *Connection, filter interface{}, update interface{}) (UpdateItemResult, error) {
 	res, err := c.collection(itemCollection).UpdateMany(c.ctx, filter, update)
 	if err != nil {
-		return SetItemResult{}, err
+		return UpdateItemResult{}, err
 	}
-	return SetItemResult{
+	return UpdateItemResult{
 		MatchedCount:  res.MatchedCount,
 		ModifiedCount: res.ModifiedCount,
 		UpsertedCount: res.UpsertedCount,
