@@ -52,7 +52,11 @@ func (k Keeper) DeleteItems(filter bson.D) (mongodb.DeleteItemResult, error) {
 
 // getItem returns the item information
 func getItem(path []string, k Keeper) ([]byte, error) {
-	var filter bson.D // TODO: convert path to filter
+	var filter bson.D
+	err := bson.Unmarshal([]byte(path[0]), &filter)
+	if err != nil {
+		return nil, err
+	}
 	dbRes, err := mongodb.GetItem(k.Conn, filter)
 	if err != nil {
 		return nil, err
@@ -68,7 +72,11 @@ func getItem(path []string, k Keeper) ([]byte, error) {
 
 // GetItems returns the item information
 func getItems(path []string, k Keeper) ([]byte, error) {
-	var filter bson.D // TODO: convert path to filter
+	var filter bson.D
+	err := bson.Unmarshal([]byte(path[0]), &filter)
+	if err != nil {
+		return nil, err
+	}
 	dbRes, err := mongodb.GetItems(k.Conn, filter)
 	if err != nil {
 		return nil, err
