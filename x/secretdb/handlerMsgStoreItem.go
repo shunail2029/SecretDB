@@ -10,13 +10,13 @@ import (
 	"github.com/shunail2029/secretdb/x/secretdb/types"
 )
 
-// Handle a message to create item
-func handleMsgCreateItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgCreateItem) (*sdk.Result, error) {
+// Handle a message to store item
+func handleMsgStoreItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgStoreItem) (*sdk.Result, error) {
 	var item = types.Item{
 		Owner: msg.Owner,
 		Data:  msg.Data,
 	}
-	res, err := k.CreateItem(item)
+	res, err := k.StoreItem(item)
 	if err != nil {
 		return nil, err
 	}

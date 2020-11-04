@@ -9,8 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// CreateItem creates a item
-func (k Keeper) CreateItem(item types.Item) (mongodb.StoreItemResult, error) {
+// StoreItem stores a item
+func (k Keeper) StoreItem(item types.Item) (mongodb.StoreItemResult, error) {
 	data := item.Data
 	data["_owner"] = item.Owner
 	return mongodb.StoreItem(k.Conn, data)
@@ -26,14 +26,14 @@ func (k Keeper) GetItems(filter bson.D) (mongodb.GetItemResult, error) {
 	return mongodb.GetItems(k.Conn, filter)
 }
 
-// SetItem sets a item
-func (k Keeper) SetItem(filter bson.D, update bson.D) (mongodb.SetItemResult, error) {
-	return mongodb.SetItem(k.Conn, filter, update)
+// UpdateItem sets a item
+func (k Keeper) UpdateItem(filter bson.D, update bson.D) (mongodb.UpdateItemResult, error) {
+	return mongodb.UpdateItem(k.Conn, filter, update)
 }
 
-// SetItems sets some items
-func (k Keeper) SetItems(filter bson.D, update bson.D) (mongodb.SetItemResult, error) {
-	return mongodb.SetItems(k.Conn, filter, update)
+// UpdateItems sets some items
+func (k Keeper) UpdateItems(filter bson.D, update bson.D) (mongodb.UpdateItemResult, error) {
+	return mongodb.UpdateItems(k.Conn, filter, update)
 }
 
 // DeleteItem deletes a item

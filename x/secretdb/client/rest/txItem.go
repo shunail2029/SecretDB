@@ -15,15 +15,15 @@ import (
 // Used to not have an error if strconv is unused
 var _ = strconv.Itoa(42)
 
-type createItemRequest struct {
+type storeItemRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Owner   string       `json:"Owner"`
 	Data    string       `json:"Data"`
 }
 
-func createItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func storeItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req createItemRequest
+		var req storeItemRequest
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
@@ -44,7 +44,7 @@ func createItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgCreateItem(
+		msg := types.NewMsgStoreItem(
 			owner,
 			data,
 		)
@@ -59,16 +59,16 @@ func createItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-type setItemRequest struct {
+type updateItemRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Owner   string       `json:"owner"`
 	Filter  string       `json:"filter"`
 	Update  string       `json:"update"`
 }
 
-func setItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func updateItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req setItemRequest
+		var req updateItemRequest
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
@@ -95,7 +95,7 @@ func setItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgSetItem(
+		msg := types.NewMsgUpdateItem(
 			owner,
 			filter,
 			update,
@@ -111,16 +111,16 @@ func setItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-type setItemsRequest struct {
+type updateItemsRequest struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Owner   string       `json:"owner"`
 	Filter  string       `json:"filter"`
 	Update  string       `json:"update"`
 }
 
-func setItemsHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func updateItemsHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req setItemsRequest
+		var req updateItemsRequest
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
@@ -147,7 +147,7 @@ func setItemsHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgSetItems(
+		msg := types.NewMsgUpdateItems(
 			owner,
 			filter,
 			update,

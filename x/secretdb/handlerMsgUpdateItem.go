@@ -11,8 +11,8 @@ import (
 	"github.com/shunail2029/secretdb/x/secretdb/types"
 )
 
-// Handle a message to set some items
-func handleMsgSetItems(ctx sdk.Context, k keeper.Keeper, msg types.MsgSetItems) (*sdk.Result, error) {
+// Handle a message to update item
+func handleMsgUpdateItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgUpdateItem) (*sdk.Result, error) {
 	// if filter has "_owner", change it to msg.Owner, else add "_owner" to filter
 	filter := msg.Filter
 	hasOwner := false
@@ -35,7 +35,7 @@ func handleMsgSetItems(ctx sdk.Context, k keeper.Keeper, msg types.MsgSetItems) 
 		return nil, fmt.Errorf("item not found with filter: %s", string(filter)) // XXX: better error might exist
 	}
 
-	res, err := k.SetItems(msg.Filter, msg.Update)
+	res, err := k.UpdateItem(msg.Filter, msg.Update)
 	if err != nil {
 		return nil, err
 	}

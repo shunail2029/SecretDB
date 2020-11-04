@@ -6,45 +6,45 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-var _ sdk.Msg = &MsgCreateItem{}
+var _ sdk.Msg = &MsgStoreItem{}
 
-// MsgCreateItem is a message type to create item
-type MsgCreateItem struct {
+// MsgStoreItem is a message type to create item
+type MsgStoreItem struct {
 	Owner sdk.AccAddress `json:"owner" yaml:"owner"`
 	Data  bson.M         `json:"data" yaml:"data"`
 }
 
-// NewMsgCreateItem returns new MsgCreateItem
-func NewMsgCreateItem(owner sdk.AccAddress, data bson.M) MsgCreateItem {
-	return MsgCreateItem{
+// NewMsgStoreItem returns new MsgStoreItem
+func NewMsgStoreItem(owner sdk.AccAddress, data bson.M) MsgStoreItem {
+	return MsgStoreItem{
 		Owner: owner,
 		Data:  data,
 	}
 }
 
 // Route ...
-func (msg MsgCreateItem) Route() string {
+func (msg MsgStoreItem) Route() string {
 	return RouterKey
 }
 
 // Type ...
-func (msg MsgCreateItem) Type() string {
+func (msg MsgStoreItem) Type() string {
 	return "CreateItem"
 }
 
 // GetSigners ...
-func (msg MsgCreateItem) GetSigners() []sdk.AccAddress {
+func (msg MsgStoreItem) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{sdk.AccAddress(msg.Owner)}
 }
 
 // GetSignBytes ...
-func (msg MsgCreateItem) GetSignBytes() []byte {
+func (msg MsgStoreItem) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
 // ValidateBasic ...
-func (msg MsgCreateItem) ValidateBasic() error {
+func (msg MsgStoreItem) ValidateBasic() error {
 	if msg.Owner.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "owner can't be empty")
 	}

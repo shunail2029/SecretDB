@@ -14,11 +14,11 @@ import (
 	"github.com/shunail2029/secretdb/x/secretdb/types"
 )
 
-// GetCmdCreateItem ...
-func GetCmdCreateItem(cdc *codec.Codec) *cobra.Command {
+// GetCmdStoreItem ...
+func GetCmdStoreItem(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "create-item [data]",
-		Short: "Creates a new item",
+		Use:   "store-item [data]",
+		Short: "Stores a new item",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var data bson.M
@@ -30,7 +30,7 @@ func GetCmdCreateItem(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			msg := types.NewMsgCreateItem(cliCtx.GetFromAddress(), data)
+			msg := types.NewMsgStoreItem(cliCtx.GetFromAddress(), data)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -40,11 +40,11 @@ func GetCmdCreateItem(cdc *codec.Codec) *cobra.Command {
 	}
 }
 
-// GetCmdSetItem ...
-func GetCmdSetItem(cdc *codec.Codec) *cobra.Command {
+// GetCmdUpdateItem ...
+func GetCmdUpdateItem(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "set-item [filter] [update] ",
-		Short: "Set a new item",
+		Use:   "update-item [filter] [update] ",
+		Short: "Update a new item",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var filter bson.D
@@ -61,7 +61,7 @@ func GetCmdSetItem(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			msg := types.NewMsgSetItem(cliCtx.GetFromAddress(), filter, update)
+			msg := types.NewMsgUpdateItem(cliCtx.GetFromAddress(), filter, update)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -71,11 +71,11 @@ func GetCmdSetItem(cdc *codec.Codec) *cobra.Command {
 	}
 }
 
-// GetCmdSetItems ...
-func GetCmdSetItems(cdc *codec.Codec) *cobra.Command {
+// GetCmdUpdateItems ...
+func GetCmdUpdateItems(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "set-items [filter] [update] ",
-		Short: "Set some new items",
+		Use:   "update-items [filter] [update] ",
+		Short: "Update some new items",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var filter bson.D
@@ -92,7 +92,7 @@ func GetCmdSetItems(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			msg := types.NewMsgSetItems(cliCtx.GetFromAddress(), filter, update)
+			msg := types.NewMsgUpdateItems(cliCtx.GetFromAddress(), filter, update)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err

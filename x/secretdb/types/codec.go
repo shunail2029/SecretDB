@@ -7,9 +7,11 @@ import (
 // RegisterCodec registers concrete types on codec
 func RegisterCodec(cdc *codec.Codec) {
 	// this line is used by starport scaffolding # 1
-	cdc.RegisterConcrete(MsgCreateItem{}, "secretdb/CreateItem", nil)
-	cdc.RegisterConcrete(MsgSetItem{}, "secretdb/SetItem", nil)
+	cdc.RegisterConcrete(MsgStoreItem{}, "secretdb/StoreItem", nil)
+	cdc.RegisterConcrete(MsgUpdateItem{}, "secretdb/UpdateItem", nil)
+	cdc.RegisterConcrete(MsgUpdateItems{}, "secretdb/UpdateItems", nil)
 	cdc.RegisterConcrete(MsgDeleteItem{}, "secretdb/DeleteItem", nil)
+	cdc.RegisterConcrete(MsgDeleteItems{}, "secretdb/DeleteItems", nil)
 }
 
 // ModuleCdc defines the module codec
