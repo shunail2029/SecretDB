@@ -43,7 +43,7 @@ func GetCmdStoreItem(cdc *codec.Codec) *cobra.Command {
 // GetCmdUpdateItem ...
 func GetCmdUpdateItem(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "update-item [filter] [update] ",
+		Use:   "update-item [filter] [update]",
 		Short: "Update a new item",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -74,7 +74,7 @@ func GetCmdUpdateItem(cdc *codec.Codec) *cobra.Command {
 // GetCmdUpdateItems ...
 func GetCmdUpdateItems(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "update-items [filter] [update] ",
+		Use:   "update-items [filter] [update]",
 		Short: "Update some new items",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

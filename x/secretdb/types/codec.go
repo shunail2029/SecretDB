@@ -14,6 +14,8 @@ func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(MsgUpdateItems{}, "secretdb/UpdateItems", nil)
 	cdc.RegisterConcrete(MsgDeleteItem{}, "secretdb/DeleteItem", nil)
 	cdc.RegisterConcrete(MsgDeleteItems{}, "secretdb/DeleteItems", nil)
+	// for bson.M
+	cdc.RegisterInterface((*interface{})(nil), nil)
 }
 
 // ModuleCdc defines the module codec
