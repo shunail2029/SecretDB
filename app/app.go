@@ -5,8 +5,6 @@ import (
 	"io"
 	"os"
 
-	"github.com/shunail2029/SecretDB/x/mongodb"
-
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -188,14 +186,9 @@ func NewInitApp(
 		),
 	)
 
-	conn := mongodb.NewConnection()
-	if conn == nil {
-		panic("cannot connect to local mongodb")
-	}
 	app.secretdbKeeper = secretdbkeeper.NewKeeper(
 		app.bankKeeper,
 		app.cdc,
-		conn,
 	)
 
 	// this line is used by starport scaffolding # 4

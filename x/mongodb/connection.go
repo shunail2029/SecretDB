@@ -2,6 +2,7 @@ package mongodb
 
 import (
 	"context"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -10,13 +11,14 @@ import (
 // Connection ...
 type Connection struct {
 	ctx    context.Context
+	cancel context.CancelFunc
 	clt    *mongo.Client
 	dbname string
 }
 
-// NewConnection is a constructor of Connection
+// newConnection is a constructor of Connection
 // TODO: enable to change URL of local MongoDB
-func NewConnection() *Connection {
+func newConnection() *Connection {
 	c := new(Connection)
 
 	err := c.connect()
@@ -35,12 +37,18 @@ func (c Connection) connect() error {
 	if err != nil {
 		return err
 	}
-	c.ctx = context.Background()
+	c.ctx, c.cancel = context.WithTimeout(context.Background(), 20*time.Second)
 	err = c.clt.Connect(c.ctx)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+// disconnect closes connection to local database
+func (c Connection) disconnect() {
+	c.clt.Disconnect(c.ctx)
+	c.cancel()
 }
 
 // get database

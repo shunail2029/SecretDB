@@ -3,8 +3,6 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/shunail2029/SecretDB/x/mongodb"
-
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -16,15 +14,13 @@ import (
 // Keeper of the secretdb store
 type Keeper struct {
 	CoinKeeper bank.Keeper
-	Conn       *mongodb.Connection
 	cdc        *codec.Codec
 }
 
 // NewKeeper creates a secretdb keeper
-func NewKeeper(coinKeeper bank.Keeper, cdc *codec.Codec, conn *mongodb.Connection) Keeper {
+func NewKeeper(coinKeeper bank.Keeper, cdc *codec.Codec) Keeper {
 	keeper := Keeper{
 		CoinKeeper: coinKeeper,
-		Conn:       conn,
 		cdc:        cdc,
 	}
 	return keeper

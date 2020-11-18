@@ -7,7 +7,11 @@ const (
 )
 
 // StoreItem stores one item
-func StoreItem(c *Connection, document interface{}) (StoreItemResult, error) {
+func StoreItem(document interface{}) (StoreItemResult, error) {
+	// create connection to database
+	c := newConnection()
+	defer c.disconnect()
+
 	_, err := c.collection(itemCollection).InsertOne(c.ctx, document)
 	if err != nil {
 		return StoreItemResult{}, err
@@ -18,7 +22,11 @@ func StoreItem(c *Connection, document interface{}) (StoreItemResult, error) {
 }
 
 // StoreItems stores some items
-func StoreItems(c *Connection, documents []interface{}) (StoreItemResult, error) {
+func StoreItems(documents []interface{}) (StoreItemResult, error) {
+	// create connection to database
+	c := newConnection()
+	defer c.disconnect()
+
 	res, err := c.collection(itemCollection).InsertMany(c.ctx, documents)
 	if err != nil {
 		return StoreItemResult{}, err
@@ -29,7 +37,11 @@ func StoreItems(c *Connection, documents []interface{}) (StoreItemResult, error)
 }
 
 // GetItem gets one item
-func GetItem(c *Connection, filter interface{}) (GetItemResult, error) {
+func GetItem(filter interface{}) (GetItemResult, error) {
+	// create connection to database
+	c := newConnection()
+	defer c.disconnect()
+
 	var res bson.M
 	err := c.collection(itemCollection).FindOne(c.ctx, filter).Decode(&res)
 	if err != nil {
@@ -42,7 +54,11 @@ func GetItem(c *Connection, filter interface{}) (GetItemResult, error) {
 }
 
 // GetItems gets some items
-func GetItems(c *Connection, filter interface{}) (GetItemResult, error) {
+func GetItems(filter interface{}) (GetItemResult, error) {
+	// create connection to database
+	c := newConnection()
+	defer c.disconnect()
+
 	cursor, err := c.collection(itemCollection).Find(c.ctx, filter)
 	if err != nil {
 		return GetItemResult{}, err
@@ -59,7 +75,11 @@ func GetItems(c *Connection, filter interface{}) (GetItemResult, error) {
 }
 
 // UpdateItem updates one item
-func UpdateItem(c *Connection, filter interface{}, update interface{}) (UpdateItemResult, error) {
+func UpdateItem(filter interface{}, update interface{}) (UpdateItemResult, error) {
+	// create connection to database
+	c := newConnection()
+	defer c.disconnect()
+
 	res, err := c.collection(itemCollection).UpdateOne(c.ctx, filter, update)
 	if err != nil {
 		return UpdateItemResult{}, err
@@ -72,7 +92,11 @@ func UpdateItem(c *Connection, filter interface{}, update interface{}) (UpdateIt
 }
 
 // UpdateItems updates some items
-func UpdateItems(c *Connection, filter interface{}, update interface{}) (UpdateItemResult, error) {
+func UpdateItems(filter interface{}, update interface{}) (UpdateItemResult, error) {
+	// create connection to database
+	c := newConnection()
+	defer c.disconnect()
+
 	res, err := c.collection(itemCollection).UpdateMany(c.ctx, filter, update)
 	if err != nil {
 		return UpdateItemResult{}, err
@@ -85,7 +109,11 @@ func UpdateItems(c *Connection, filter interface{}, update interface{}) (UpdateI
 }
 
 // DeleteItem deletes one item
-func DeleteItem(c *Connection, filter interface{}) (DeleteItemResult, error) {
+func DeleteItem(filter interface{}) (DeleteItemResult, error) {
+	// create connection to database
+	c := newConnection()
+	defer c.disconnect()
+
 	res, err := c.collection(itemCollection).DeleteOne(c.ctx, filter)
 	if err != nil {
 		return DeleteItemResult{}, err
@@ -96,7 +124,11 @@ func DeleteItem(c *Connection, filter interface{}) (DeleteItemResult, error) {
 }
 
 // DeleteItems deletes some items
-func DeleteItems(c *Connection, filter interface{}) (DeleteItemResult, error) {
+func DeleteItems(filter interface{}) (DeleteItemResult, error) {
+	// create connection to database
+	c := newConnection()
+	defer c.disconnect()
+
 	res, err := c.collection(itemCollection).DeleteMany(c.ctx, filter)
 	if err != nil {
 		return DeleteItemResult{}, err
