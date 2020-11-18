@@ -34,7 +34,7 @@ func newConnection() *Connection {
 func (c Connection) connect() error {
 	var err error
 	c.ctx, c.cancel = context.WithTimeout(context.Background(), 20*time.Second)
-	c.clt, err = mongo.Connect(c.ctx, options.Client().ApplyURI("mongodb://username:password@localhost:27017"))
+	c.clt, err = mongo.Connect(c.ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
 		return err
 	}
