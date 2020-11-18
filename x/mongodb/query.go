@@ -1,6 +1,10 @@
 package mongodb
 
-import "go.mongodb.org/mongo-driver/bson"
+import (
+	"context"
+
+	"go.mongodb.org/mongo-driver/bson"
+)
 
 const (
 	itemCollection = "items"
@@ -12,7 +16,7 @@ func StoreItem(document interface{}) (StoreItemResult, error) {
 	c := newConnection()
 	defer c.disconnect()
 
-	_, err := c.collection(itemCollection).InsertOne(c.ctx, document)
+	_, err := c.collection(itemCollection).InsertOne(context.Background(), document)
 	if err != nil {
 		return StoreItemResult{}, err
 	}
@@ -27,7 +31,7 @@ func StoreItems(documents []interface{}) (StoreItemResult, error) {
 	c := newConnection()
 	defer c.disconnect()
 
-	res, err := c.collection(itemCollection).InsertMany(c.ctx, documents)
+	res, err := c.collection(itemCollection).InsertMany(context.Background(), documents)
 	if err != nil {
 		return StoreItemResult{}, err
 	}
@@ -43,7 +47,7 @@ func GetItem(filter interface{}) (GetItemResult, error) {
 	defer c.disconnect()
 
 	var res bson.M
-	err := c.collection(itemCollection).FindOne(c.ctx, filter).Decode(&res)
+	err := c.collection(itemCollection).FindOne(context.Background(), filter).Decode(&res)
 	if err != nil {
 		return GetItemResult{}, err
 	}
@@ -59,13 +63,13 @@ func GetItems(filter interface{}) (GetItemResult, error) {
 	c := newConnection()
 	defer c.disconnect()
 
-	cursor, err := c.collection(itemCollection).Find(c.ctx, filter)
+	cursor, err := c.collection(itemCollection).Find(context.Background(), filter)
 	if err != nil {
 		return GetItemResult{}, err
 	}
 
 	var res []bson.M
-	if err = cursor.All(c.ctx, &res); err != nil {
+	if err = cursor.All(context.Background(), &res); err != nil {
 		return GetItemResult{}, err
 	}
 	return GetItemResult{
@@ -80,7 +84,7 @@ func UpdateItem(filter interface{}, update interface{}) (UpdateItemResult, error
 	c := newConnection()
 	defer c.disconnect()
 
-	res, err := c.collection(itemCollection).UpdateOne(c.ctx, filter, update)
+	res, err := c.collection(itemCollection).UpdateOne(context.Background(), filter, update)
 	if err != nil {
 		return UpdateItemResult{}, err
 	}
@@ -97,7 +101,7 @@ func UpdateItems(filter interface{}, update interface{}) (UpdateItemResult, erro
 	c := newConnection()
 	defer c.disconnect()
 
-	res, err := c.collection(itemCollection).UpdateMany(c.ctx, filter, update)
+	res, err := c.collection(itemCollection).UpdateMany(context.Background(), filter, update)
 	if err != nil {
 		return UpdateItemResult{}, err
 	}
@@ -114,7 +118,7 @@ func DeleteItem(filter interface{}) (DeleteItemResult, error) {
 	c := newConnection()
 	defer c.disconnect()
 
-	res, err := c.collection(itemCollection).DeleteOne(c.ctx, filter)
+	res, err := c.collection(itemCollection).DeleteOne(context.Background(), filter)
 	if err != nil {
 		return DeleteItemResult{}, err
 	}
@@ -129,7 +133,7 @@ func DeleteItems(filter interface{}) (DeleteItemResult, error) {
 	c := newConnection()
 	defer c.disconnect()
 
-	res, err := c.collection(itemCollection).DeleteMany(c.ctx, filter)
+	res, err := c.collection(itemCollection).DeleteMany(context.Background(), filter)
 	if err != nil {
 		return DeleteItemResult{}, err
 	}

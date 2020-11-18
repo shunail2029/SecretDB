@@ -33,12 +33,8 @@ func newConnection() *Connection {
 // create connection to local database
 func (c Connection) connect() error {
 	var err error
-	c.clt, err = mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
-	if err != nil {
-		return err
-	}
 	c.ctx, c.cancel = context.WithTimeout(context.Background(), 20*time.Second)
-	err = c.clt.Connect(c.ctx)
+	c.clt, err = mongo.Connect(c.ctx, options.Client().ApplyURI("mongodb://username:password@localhost:27017"))
 	if err != nil {
 		return err
 	}
@@ -47,7 +43,6 @@ func (c Connection) connect() error {
 
 // disconnect closes connection to local database
 func (c Connection) disconnect() {
-	c.clt.Disconnect(c.ctx)
 	c.cancel()
 }
 
