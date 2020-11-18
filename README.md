@@ -101,6 +101,15 @@ go install ./cmd/secretdbd
 go install ./cmd/secretdbcli
 ```
 
+## MongoDBデータベース作成
+
+```bash
+$ mongo
+> use secretdb;
+> db.createCollection('items');
+> exit;
+```
+
 ## 起動方法
 
 ```bash

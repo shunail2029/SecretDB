@@ -12,6 +12,9 @@ import (
 // StoreItem stores a item
 func (k Keeper) StoreItem(item types.Item) (mongodb.StoreItemResult, error) {
 	data := item.Data
+	if data == nil {
+		data = make(bson.M)
+	}
 	data["_owner"] = item.Owner
 	return mongodb.StoreItem(k.Conn, data)
 }
