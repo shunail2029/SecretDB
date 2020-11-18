@@ -31,7 +31,7 @@ func newConnection() *Connection {
 }
 
 // create connection to local database
-func (c Connection) connect() error {
+func (c *Connection) connect() error {
 	var err error
 	c.ctx, c.cancel = context.WithTimeout(context.Background(), 20*time.Second)
 	c.clt, err = mongo.Connect(c.ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
@@ -42,16 +42,16 @@ func (c Connection) connect() error {
 }
 
 // disconnect closes connection to local database
-func (c Connection) disconnect() {
+func (c *Connection) disconnect() {
 	c.cancel()
 }
 
 // get database
-func (c Connection) db() *mongo.Database {
+func (c *Connection) db() *mongo.Database {
 	return c.clt.Database(c.dbname)
 }
 
 // get collection
-func (c Connection) collection(name string) *mongo.Collection {
+func (c *Connection) collection(name string) *mongo.Collection {
 	return c.db().Collection(name)
 }
