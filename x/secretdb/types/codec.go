@@ -16,11 +16,11 @@ func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(MsgDeleteItems{}, "secretdb/DeleteItems", nil)
 	// for bson.M
 	cdc.RegisterInterface((*interface{})(nil), nil)
-	cdc.RegisterInterface((*bool)(nil), nil)
-	cdc.RegisterInterface((*int64)(nil), nil)
-	cdc.RegisterInterface((*uint64)(nil), nil)
-	cdc.RegisterInterface((*string)(nil), nil)
-	cdc.RegisterInterface((*byte)(nil), nil)
+	cdc.RegisterConcrete(bool(false), "bool", nil)
+	cdc.RegisterConcrete(int64(0), "int64", nil)
+	cdc.RegisterConcrete(uint64(0), "uint64", nil)
+	cdc.RegisterConcrete(string(""), "string", nil)
+	cdc.RegisterConcrete(byte(0), "byte", nil)
 }
 
 // ModuleCdc defines the module codec
