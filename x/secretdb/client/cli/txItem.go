@@ -45,7 +45,7 @@ func GetCmdUpdateItem(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "update-item [filter] [update]",
 		Short: "Update a new item",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var filter bson.D
 			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
@@ -76,7 +76,7 @@ func GetCmdUpdateItems(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "update-items [filter] [update]",
 		Short: "Update some new items",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var filter bson.D
 			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
