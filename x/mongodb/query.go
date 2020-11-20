@@ -2,6 +2,7 @@ package mongodb
 
 import (
 	"context"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -13,8 +14,9 @@ const (
 // StoreItem stores one item
 func StoreItem(document interface{}) (StoreItemResult, error) {
 	// create connection to database
-	c := newConnection()
-	defer c.disconnect()
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	c := newConnection(ctx)
 
 	_, err := c.collection(itemCollection).InsertOne(context.Background(), document)
 	if err != nil {
@@ -28,8 +30,9 @@ func StoreItem(document interface{}) (StoreItemResult, error) {
 // StoreItems stores some items
 func StoreItems(documents []interface{}) (StoreItemResult, error) {
 	// create connection to database
-	c := newConnection()
-	defer c.disconnect()
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	c := newConnection(ctx)
 
 	res, err := c.collection(itemCollection).InsertMany(context.Background(), documents)
 	if err != nil {
@@ -43,8 +46,9 @@ func StoreItems(documents []interface{}) (StoreItemResult, error) {
 // GetItem gets one item
 func GetItem(filter interface{}) (GetItemResult, error) {
 	// create connection to database
-	c := newConnection()
-	defer c.disconnect()
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	c := newConnection(ctx)
 
 	var res bson.M
 	err := c.collection(itemCollection).FindOne(context.Background(), filter).Decode(&res)
@@ -60,8 +64,9 @@ func GetItem(filter interface{}) (GetItemResult, error) {
 // GetItems gets some items
 func GetItems(filter interface{}) (GetItemResult, error) {
 	// create connection to database
-	c := newConnection()
-	defer c.disconnect()
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	c := newConnection(ctx)
 
 	cursor, err := c.collection(itemCollection).Find(context.Background(), filter)
 	if err != nil {
@@ -81,8 +86,9 @@ func GetItems(filter interface{}) (GetItemResult, error) {
 // UpdateItem updates one item
 func UpdateItem(filter interface{}, update interface{}) (UpdateItemResult, error) {
 	// create connection to database
-	c := newConnection()
-	defer c.disconnect()
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	c := newConnection(ctx)
 
 	res, err := c.collection(itemCollection).UpdateOne(context.Background(), filter, update)
 	if err != nil {
@@ -98,8 +104,9 @@ func UpdateItem(filter interface{}, update interface{}) (UpdateItemResult, error
 // UpdateItems updates some items
 func UpdateItems(filter interface{}, update interface{}) (UpdateItemResult, error) {
 	// create connection to database
-	c := newConnection()
-	defer c.disconnect()
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	c := newConnection(ctx)
 
 	res, err := c.collection(itemCollection).UpdateMany(context.Background(), filter, update)
 	if err != nil {
@@ -115,8 +122,9 @@ func UpdateItems(filter interface{}, update interface{}) (UpdateItemResult, erro
 // DeleteItem deletes one item
 func DeleteItem(filter interface{}) (DeleteItemResult, error) {
 	// create connection to database
-	c := newConnection()
-	defer c.disconnect()
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	c := newConnection(ctx)
 
 	res, err := c.collection(itemCollection).DeleteOne(context.Background(), filter)
 	if err != nil {
@@ -130,8 +138,9 @@ func DeleteItem(filter interface{}) (DeleteItemResult, error) {
 // DeleteItems deletes some items
 func DeleteItems(filter interface{}) (DeleteItemResult, error) {
 	// create connection to database
-	c := newConnection()
-	defer c.disconnect()
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	c := newConnection(ctx)
 
 	res, err := c.collection(itemCollection).DeleteMany(context.Background(), filter)
 	if err != nil {
