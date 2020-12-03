@@ -105,9 +105,9 @@ go install ./cmd/secretdbcli
 
 ```bash
 $ mongo
-> use secretdb;
-> db.createCollection('items');
-> exit;
+> use secretdb
+> db.createCollection('items')
+> exit
 ```
 
 ## 起動方法
