@@ -82,13 +82,13 @@ func updateItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		var filter bson.D
+		var filter bson.M
 		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, &filter)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		var update bson.D
+		var update bson.M
 		err = bson.UnmarshalExtJSON([]byte(req.Update), true, &update)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -134,13 +134,13 @@ func updateItemsHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		var filter bson.D
+		var filter bson.M
 		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, &filter)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		var update bson.D
+		var update bson.M
 		err = bson.UnmarshalExtJSON([]byte(req.Update), true, &update)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -185,7 +185,7 @@ func deleteItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		var filter bson.D
+		var filter bson.M
 		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, &filter)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -229,7 +229,7 @@ func deleteItemsHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		var filter bson.D
+		var filter bson.M
 		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, &filter)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

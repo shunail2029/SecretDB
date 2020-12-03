@@ -11,12 +11,12 @@ var _ sdk.Msg = &MsgUpdateItems{}
 // MsgUpdateItems is message type to set some items
 type MsgUpdateItems struct {
 	Owner  sdk.AccAddress `json:"owner" yaml:"owner"`
-	Filter bson.D         `json:"filter" yaml:"filter"`
-	Update bson.D         `json:"update" yaml:"update"`
+	Filter bson.M         `json:"filter" yaml:"filter"`
+	Update bson.M         `json:"update" yaml:"update"`
 }
 
 // NewMsgUpdateItems returns new MsgUpdateItems
-func NewMsgUpdateItems(owner sdk.AccAddress, filter bson.D, update bson.D) MsgUpdateItems {
+func NewMsgUpdateItems(owner sdk.AccAddress, filter bson.M, update bson.M) MsgUpdateItems {
 	return MsgUpdateItems{
 		Owner:  owner,
 		Filter: filter,

@@ -11,11 +11,11 @@ var _ sdk.Msg = &MsgDeleteItems{}
 // MsgDeleteItems is a message type to delete some items
 type MsgDeleteItems struct {
 	Owner  sdk.AccAddress `json:"owner" yaml:"owner"`
-	Filter bson.D         `json:"filter" yaml:"filter"`
+	Filter bson.M         `json:"filter" yaml:"filter"`
 }
 
 // NewMsgDeleteItems returns new MsgDeleteItems
-func NewMsgDeleteItems(owner sdk.AccAddress, filter bson.D) MsgDeleteItems {
+func NewMsgDeleteItems(owner sdk.AccAddress, filter bson.M) MsgDeleteItems {
 	return MsgDeleteItems{
 		Owner:  owner,
 		Filter: filter,

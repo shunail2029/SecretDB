@@ -14,5 +14,5 @@ type Item struct {
 // ItemFilter is a type of filter of data stored in MongoDB
 type ItemFilter struct {
 	Owner  sdk.AccAddress `json:"owner" yaml:"owner"`
-	Filter bson.D         `json:"filter" yaml:"filter"`
+	Filter bson.M         `json:"filter" yaml:"filter"`
 }

@@ -47,12 +47,12 @@ func GetCmdUpdateItem(cdc *codec.Codec) *cobra.Command {
 		Short: "Update a new item",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var filter bson.D
+			var filter bson.M
 			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
 			if err != nil {
 				return err
 			}
-			var update bson.D
+			var update bson.M
 			err = bson.UnmarshalExtJSON([]byte(args[1]), true, &update)
 			if err != nil {
 				return err
@@ -78,12 +78,12 @@ func GetCmdUpdateItems(cdc *codec.Codec) *cobra.Command {
 		Short: "Update some new items",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var filter bson.D
+			var filter bson.M
 			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
 			if err != nil {
 				return err
 			}
-			var update bson.D
+			var update bson.M
 			err = bson.UnmarshalExtJSON([]byte(args[1]), true, &update)
 			if err != nil {
 				return err
@@ -109,7 +109,7 @@ func GetCmdDeleteItem(cdc *codec.Codec) *cobra.Command {
 		Short: "Delete a item by Filter",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var filter bson.D
+			var filter bson.M
 			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
 			if err != nil {
 				return err
@@ -136,7 +136,7 @@ func GetCmdDeleteItems(cdc *codec.Codec) *cobra.Command {
 		Short: "Delete some items by Filter",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var filter bson.D
+			var filter bson.M
 			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
 			if err != nil {
 				return err

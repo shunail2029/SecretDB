@@ -11,11 +11,7 @@ import (
 
 // StoreItem stores a item
 func (k Keeper) StoreItem(item types.Item) (mongodb.StoreItemResult, error) {
-	data := item.Data
-	if data == nil {
-		data = make(bson.M)
-	}
-	data["_owner"] = item.Owner
+	data := insertOwner(item.Owner, item.Data)
 	return mongodb.StoreItem(data)
 }
 
@@ -32,13 +28,13 @@ func (k Keeper) GetItems(iFil types.ItemFilter) (mongodb.GetItemResult, error) {
 }
 
 // UpdateItem sets a item
-func (k Keeper) UpdateItem(iFil types.ItemFilter, update bson.D) (mongodb.UpdateItemResult, error) {
+func (k Keeper) UpdateItem(iFil types.ItemFilter, update bson.M) (mongodb.UpdateItemResult, error) {
 	filter := insertOwner(iFil.Owner, iFil.Filter)
 	return mongodb.UpdateItem(filter, update)
 }
 
 // UpdateItems sets some items
-func (k Keeper) UpdateItems(iFil types.ItemFilter, update bson.D) (mongodb.UpdateItemResult, error) {
+func (k Keeper) UpdateItems(iFil types.ItemFilter, update bson.M) (mongodb.UpdateItemResult, error) {
 	filter := insertOwner(iFil.Owner, iFil.Filter)
 	return mongodb.UpdateItems(filter, update)
 }
@@ -61,7 +57,7 @@ func (k Keeper) DeleteItems(iFil types.ItemFilter) (mongodb.DeleteItemResult, er
 
 // getItem returns the item information
 func getItem(path []string, k Keeper) ([]byte, error) {
-	var filter bson.D
+	var filter bson.M
 	err := bson.UnmarshalExtJSON([]byte(path[0]), true, &filter)
 	if err != nil {
 		return nil, err
@@ -81,7 +77,7 @@ func getItem(path []string, k Keeper) ([]byte, error) {
 
 // GetItems returns the item information
 func getItems(path []string, k Keeper) ([]byte, error) {
-	var filter bson.D
+	var filter bson.M
 	err := bson.UnmarshalExtJSON([]byte(path[0]), true, &filter)
 	if err != nil {
 		return nil, err
@@ -102,7 +98,7 @@ func getItems(path []string, k Keeper) ([]byte, error) {
 }
 
 // GetItemOwner gets owner of the item
-func (k Keeper) GetItemOwner(filter bson.D) sdk.AccAddress {
+func (k Keeper) GetItemOwner(filter bson.M) sdk.AccAddress {
 	res, err := mongodb.GetItem(filter)
 	if err != nil || res.GotItemCount != 1 {
 		return nil
@@ -117,7 +113,7 @@ func (k Keeper) GetItemOwner(filter bson.D) sdk.AccAddress {
 
 // GetItemsOwner gets owner of the items
 // If one owner owns all items, return address of the owner
-func (k Keeper) GetItemsOwner(filter bson.D) sdk.AccAddress {
+func (k Keeper) GetItemsOwner(filter bson.M) sdk.AccAddress {
 	res, err := mongodb.GetItem(filter)
 	if err != nil || res.GotItemCount == 0 {
 		return nil
@@ -148,20 +144,10 @@ func (k Keeper) ItemExists(iFil types.ItemFilter) bool {
 }
 
 // if filter has "_owner", change it to owner, else add "_owner" to filter
-func insertOwner(owner sdk.AccAddress, filter bson.D) bson.D {
-	hasOwner := false
-	for idx := range filter {
-		if filter[idx].Key == "_owner" {
-			filter[idx].Value = owner
-			hasOwner = true
-			break
-		}
+func insertOwner(owner sdk.AccAddress, m bson.M) bson.M {
+	if m == nil {
+		m = make(bson.M)
 	}
-	if !hasOwner {
-		filter = append(filter, bson.E{
-			Key:   "_owner",
-			Value: owner,
-		})
-	}
-	return filter
+	m["_owner"] = owner
+	return m
 }
