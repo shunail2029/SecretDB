@@ -20,32 +20,38 @@ func (k Keeper) StoreItem(item types.Item) (mongodb.StoreItemResult, error) {
 }
 
 // GetItem returns the item information
-func (k Keeper) GetItem(filter bson.D) (mongodb.GetItemResult, error) {
+func (k Keeper) GetItem(iFil types.ItemFilter) (mongodb.GetItemResult, error) {
+	filter := insertOwner(iFil.Owner, iFil.Filter)
 	return mongodb.GetItem(filter)
 }
 
 // GetItems returns the item information
-func (k Keeper) GetItems(filter bson.D) (mongodb.GetItemResult, error) {
+func (k Keeper) GetItems(iFil types.ItemFilter) (mongodb.GetItemResult, error) {
+	filter := insertOwner(iFil.Owner, iFil.Filter)
 	return mongodb.GetItems(filter)
 }
 
 // UpdateItem sets a item
-func (k Keeper) UpdateItem(filter bson.D, update bson.D) (mongodb.UpdateItemResult, error) {
+func (k Keeper) UpdateItem(iFil types.ItemFilter, update bson.D) (mongodb.UpdateItemResult, error) {
+	filter := insertOwner(iFil.Owner, iFil.Filter)
 	return mongodb.UpdateItem(filter, update)
 }
 
 // UpdateItems sets some items
-func (k Keeper) UpdateItems(filter bson.D, update bson.D) (mongodb.UpdateItemResult, error) {
+func (k Keeper) UpdateItems(iFil types.ItemFilter, update bson.D) (mongodb.UpdateItemResult, error) {
+	filter := insertOwner(iFil.Owner, iFil.Filter)
 	return mongodb.UpdateItems(filter, update)
 }
 
 // DeleteItem deletes a item
-func (k Keeper) DeleteItem(filter bson.D) (mongodb.DeleteItemResult, error) {
+func (k Keeper) DeleteItem(iFil types.ItemFilter) (mongodb.DeleteItemResult, error) {
+	filter := insertOwner(iFil.Owner, iFil.Filter)
 	return mongodb.DeleteItem(filter)
 }
 
 // DeleteItems deletes some items
-func (k Keeper) DeleteItems(filter bson.D) (mongodb.DeleteItemResult, error) {
+func (k Keeper) DeleteItems(iFil types.ItemFilter) (mongodb.DeleteItemResult, error) {
+	filter := insertOwner(iFil.Owner, iFil.Filter)
 	return mongodb.DeleteItems(filter)
 }
 
@@ -135,7 +141,27 @@ func (k Keeper) GetItemsOwner(filter bson.D) sdk.AccAddress {
 }
 
 // ItemExists checks if the key exists in the store
-func (k Keeper) ItemExists(filter bson.D) bool {
+func (k Keeper) ItemExists(iFil types.ItemFilter) bool {
+	filter := insertOwner(iFil.Owner, iFil.Filter)
 	res, err := mongodb.GetItem(filter)
 	return err == nil && res.GotItemCount > 0
+}
+
+// if filter has "_owner", change it to owner, else add "_owner" to filter
+func insertOwner(owner sdk.AccAddress, filter bson.D) bson.D {
+	hasOwner := false
+	for idx := range filter {
+		if filter[idx].Key == "_owner" {
+			filter[idx].Value = owner
+			hasOwner = true
+			break
+		}
+	}
+	if !hasOwner {
+		filter = append(filter, bson.E{
+			Key:   "_owner",
+			Value: owner,
+		})
+	}
+	return filter
 }
