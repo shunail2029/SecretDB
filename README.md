@@ -136,7 +136,7 @@ secretdbd add-genesis-account $(secretdbcli keys show user2 -a) 1000token
 
 # genesis.jsonに初期トランザクションを追加
 secretdbd gentx --name user1 --keyring-backend test
-secretdbd collect-gentx
+secretdbd collect-gentxs
 
 # 起動
 secretdbd start

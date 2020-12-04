@@ -3,7 +3,6 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 var _ sdk.Msg = &MsgStoreItem{}
@@ -11,11 +10,11 @@ var _ sdk.Msg = &MsgStoreItem{}
 // MsgStoreItem is a message type to create item
 type MsgStoreItem struct {
 	Owner sdk.AccAddress `json:"owner" yaml:"owner"`
-	Data  bson.M         `json:"data" yaml:"data"`
+	Data  string         `json:"data" yaml:"data"`
 }
 
 // NewMsgStoreItem returns new MsgStoreItem
-func NewMsgStoreItem(owner sdk.AccAddress, data bson.M) MsgStoreItem {
+func NewMsgStoreItem(owner sdk.AccAddress, data string) MsgStoreItem {
 	return MsgStoreItem{
 		Owner: owner,
 		Data:  data,

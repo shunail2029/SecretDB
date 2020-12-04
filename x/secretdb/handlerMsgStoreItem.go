@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/shunail2029/SecretDB/x/secretdb/keeper"
 	"github.com/shunail2029/SecretDB/x/secretdb/types"
@@ -12,9 +13,15 @@ import (
 
 // Handle a message to store item
 func handleMsgStoreItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgStoreItem) (*sdk.Result, error) {
+	var data bson.M
+	err := bson.UnmarshalExtJSON([]byte(msg.Data), true, &data)
+	if err != nil {
+		return nil, err
+	}
+
 	var item = types.Item{
 		Owner: msg.Owner,
-		Data:  msg.Data,
+		Data:  data,
 	}
 	res, err := k.StoreItem(item)
 	if err != nil {

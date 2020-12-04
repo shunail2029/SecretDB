@@ -37,8 +37,9 @@ func storeItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		var data bson.M
-		err = bson.UnmarshalExtJSON([]byte(req.Data), false, &data)
+
+		// check whether req.Data can be decoded as bson.M
+		err = bson.UnmarshalExtJSON([]byte(req.Data), false, bson.M{})
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -46,7 +47,7 @@ func storeItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 		msg := types.NewMsgStoreItem(
 			owner,
-			data,
+			req.Data,
 		)
 
 		err = msg.ValidateBasic()
@@ -82,14 +83,14 @@ func updateItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		var filter bson.M
-		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, &filter)
+
+		// check whether req.Filter and req.Update can be decoded as bson.M
+		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, bson.M{})
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		var update bson.M
-		err = bson.UnmarshalExtJSON([]byte(req.Update), true, &update)
+		err = bson.UnmarshalExtJSON([]byte(req.Update), true, bson.M{})
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -97,8 +98,8 @@ func updateItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 		msg := types.NewMsgUpdateItem(
 			owner,
-			filter,
-			update,
+			req.Filter,
+			req.Update,
 		)
 
 		err = msg.ValidateBasic()
@@ -134,14 +135,14 @@ func updateItemsHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		var filter bson.M
-		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, &filter)
+
+		// check whether req.Filter and req.Update can be decoded as bson.M
+		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, bson.M{})
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		var update bson.M
-		err = bson.UnmarshalExtJSON([]byte(req.Update), true, &update)
+		err = bson.UnmarshalExtJSON([]byte(req.Update), true, bson.M{})
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -149,8 +150,8 @@ func updateItemsHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 		msg := types.NewMsgUpdateItems(
 			owner,
-			filter,
-			update,
+			req.Filter,
+			req.Update,
 		)
 
 		err = msg.ValidateBasic()
@@ -185,8 +186,9 @@ func deleteItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		var filter bson.M
-		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, &filter)
+
+		// check whether req.Filter can be decoded as bson.M
+		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, bson.M{})
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -194,7 +196,7 @@ func deleteItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 		msg := types.NewMsgDeleteItem(
 			owner,
-			filter,
+			req.Filter,
 		)
 
 		err = msg.ValidateBasic()
@@ -229,8 +231,9 @@ func deleteItemsHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		var filter bson.M
-		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, &filter)
+
+		// check whether req.Filter can be decoded as bson.M
+		err = bson.UnmarshalExtJSON([]byte(req.Filter), true, bson.M{})
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -238,7 +241,7 @@ func deleteItemsHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 		msg := types.NewMsgDeleteItems(
 			owner,
-			filter,
+			req.Filter,
 		)
 
 		err = msg.ValidateBasic()

@@ -21,8 +21,8 @@ func GetCmdStoreItem(cdc *codec.Codec) *cobra.Command {
 		Short: "Stores a new item",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var data bson.M
-			err := bson.UnmarshalExtJSON([]byte(args[0]), false, &data)
+			// check whether args[0] can be decoded as bson.M
+			err := bson.UnmarshalExtJSON([]byte(args[0]), false, bson.M{})
 			if err != nil {
 				return err
 			}
@@ -30,7 +30,7 @@ func GetCmdStoreItem(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			msg := types.NewMsgStoreItem(cliCtx.GetFromAddress(), data)
+			msg := types.NewMsgStoreItem(cliCtx.GetFromAddress(), args[0])
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -47,13 +47,12 @@ func GetCmdUpdateItem(cdc *codec.Codec) *cobra.Command {
 		Short: "Update a new item",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var filter bson.M
-			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
+			// check whether args[0] and args[1] can be decoded as bson.M
+			err := bson.UnmarshalExtJSON([]byte(args[0]), true, bson.M{})
 			if err != nil {
 				return err
 			}
-			var update bson.M
-			err = bson.UnmarshalExtJSON([]byte(args[1]), true, &update)
+			err = bson.UnmarshalExtJSON([]byte(args[1]), true, bson.M{})
 			if err != nil {
 				return err
 			}
@@ -61,7 +60,7 @@ func GetCmdUpdateItem(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			msg := types.NewMsgUpdateItem(cliCtx.GetFromAddress(), filter, update)
+			msg := types.NewMsgUpdateItem(cliCtx.GetFromAddress(), args[0], args[1])
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -78,13 +77,12 @@ func GetCmdUpdateItems(cdc *codec.Codec) *cobra.Command {
 		Short: "Update some new items",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var filter bson.M
-			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
+			// check whether args[0] and args[1] can be decoded as bson.M
+			err := bson.UnmarshalExtJSON([]byte(args[0]), true, bson.M{})
 			if err != nil {
 				return err
 			}
-			var update bson.M
-			err = bson.UnmarshalExtJSON([]byte(args[1]), true, &update)
+			err = bson.UnmarshalExtJSON([]byte(args[1]), true, bson.M{})
 			if err != nil {
 				return err
 			}
@@ -92,7 +90,7 @@ func GetCmdUpdateItems(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			msg := types.NewMsgUpdateItems(cliCtx.GetFromAddress(), filter, update)
+			msg := types.NewMsgUpdateItems(cliCtx.GetFromAddress(), args[0], args[1])
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -109,8 +107,8 @@ func GetCmdDeleteItem(cdc *codec.Codec) *cobra.Command {
 		Short: "Delete a item by Filter",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var filter bson.M
-			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
+			// check whether args[0] can be decoded as bson.M
+			err := bson.UnmarshalExtJSON([]byte(args[0]), true, bson.M{})
 			if err != nil {
 				return err
 			}
@@ -119,7 +117,7 @@ func GetCmdDeleteItem(cdc *codec.Codec) *cobra.Command {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			msg := types.NewMsgDeleteItem(cliCtx.GetFromAddress(), filter)
+			msg := types.NewMsgDeleteItem(cliCtx.GetFromAddress(), args[0])
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -136,8 +134,8 @@ func GetCmdDeleteItems(cdc *codec.Codec) *cobra.Command {
 		Short: "Delete some items by Filter",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			var filter bson.M
-			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
+			// check whether args[0] can be decoded as bson.M
+			err := bson.UnmarshalExtJSON([]byte(args[0]), true, bson.M{})
 			if err != nil {
 				return err
 			}
@@ -146,7 +144,7 @@ func GetCmdDeleteItems(cdc *codec.Codec) *cobra.Command {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			msg := types.NewMsgDeleteItems(cliCtx.GetFromAddress(), filter)
+			msg := types.NewMsgDeleteItems(cliCtx.GetFromAddress(), args[0])
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err

@@ -13,9 +13,19 @@ import (
 
 // Handle a message to update item
 func handleMsgUpdateItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgUpdateItem) (*sdk.Result, error) {
+	var filter, update bson.M
+	err := bson.UnmarshalExtJSON([]byte(msg.Filter), true, &filter)
+	if err != nil {
+		return nil, err
+	}
+	err = bson.UnmarshalExtJSON([]byte(msg.Update), true, &update)
+	if err != nil {
+		return nil, err
+	}
+
 	iFil := types.ItemFilter{
 		Owner:  msg.Owner,
-		Filter: msg.Filter,
+		Filter: filter,
 	}
 
 	if !k.ItemExists(iFil) {
@@ -23,7 +33,7 @@ func handleMsgUpdateItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgUpdateIt
 		return nil, fmt.Errorf("item not found with filter: %s", string(filter)) // XXX: better error might exist
 	}
 
-	res, err := k.UpdateItem(iFil, msg.Update)
+	res, err := k.UpdateItem(iFil, update)
 	if err != nil {
 		return nil, err
 	}

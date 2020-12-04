@@ -13,9 +13,15 @@ import (
 
 // Handle a message to delete item
 func handleMsgDeleteItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgDeleteItem) (*sdk.Result, error) {
+	var filter bson.M
+	err := bson.UnmarshalExtJSON([]byte(msg.Filter), true, &filter)
+	if err != nil {
+		return nil, err
+	}
+
 	iFil := types.ItemFilter{
 		Owner:  msg.Owner,
-		Filter: msg.Filter,
+		Filter: filter,
 	}
 
 	if !k.ItemExists(iFil) {

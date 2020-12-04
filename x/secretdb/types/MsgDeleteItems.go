@@ -3,7 +3,6 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 var _ sdk.Msg = &MsgDeleteItems{}
@@ -11,11 +10,11 @@ var _ sdk.Msg = &MsgDeleteItems{}
 // MsgDeleteItems is a message type to delete some items
 type MsgDeleteItems struct {
 	Owner  sdk.AccAddress `json:"owner" yaml:"owner"`
-	Filter bson.M         `json:"filter" yaml:"filter"`
+	Filter string         `json:"filter" yaml:"filter"`
 }
 
 // NewMsgDeleteItems returns new MsgDeleteItems
-func NewMsgDeleteItems(owner sdk.AccAddress, filter bson.M) MsgDeleteItems {
+func NewMsgDeleteItems(owner sdk.AccAddress, filter string) MsgDeleteItems {
 	return MsgDeleteItems{
 		Owner:  owner,
 		Filter: filter,
