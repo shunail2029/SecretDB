@@ -1,3 +1,6 @@
+build: go.sum
+	go build ./...
+
 install: go.sum
 	go install ./cmd/secretdbd
 	go install ./cmd/secretdbcli
