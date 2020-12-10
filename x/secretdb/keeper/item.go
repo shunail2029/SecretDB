@@ -155,6 +155,6 @@ func insertOwner(owner sdk.AccAddress, m bson.M) bson.M {
 	if m == nil {
 		m = make(bson.M)
 	}
-	m["_owner"] = owner
+	m["_owner"] = owner.String()
 	return m
 }
