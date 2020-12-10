@@ -51,8 +51,8 @@ func GetItem(filter interface{}) (GetItemResult, error) {
 	defer cancel()
 	c := newConnection(ctx)
 
-	var res []bson.M
-	err := c.collection(itemCollection).FindOne(context.Background(), filter).Decode(&res[0])
+	var res bson.M
+	err := c.collection(itemCollection).FindOne(context.Background(), filter).Decode(&res)
 	if err == mongo.ErrNoDocuments {
 		return GetItemResult{
 			GotItemCount: 0,
@@ -61,9 +61,10 @@ func GetItem(filter interface{}) (GetItemResult, error) {
 	} else if err != nil {
 		return GetItemResult{}, err
 	}
+
 	return GetItemResult{
 		GotItemCount: 1,
-		Data:         res,
+		Data:         []bson.M{res},
 	}, nil
 }
 
