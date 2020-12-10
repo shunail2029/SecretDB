@@ -8,7 +8,6 @@ import (
 	"github.com/shunail2029/SecretDB/x/mongodb"
 	"github.com/shunail2029/SecretDB/x/secretdb/types"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // StoreItem stores a item
@@ -66,15 +65,6 @@ func getItem(path []string, k Keeper) ([]byte, error) {
 		return res, nil
 	}
 
-	// convert _id type from primitive.ObjectID to string
-	oid := dbRes.Data[0]["_id"]
-	switch o := oid.(type) {
-	case primitive.ObjectID:
-		dbRes.Data[0]["_id"] = o.String()
-	default:
-		return nil, errors.New("type of _id is not ObjectID")
-	}
-
 	var res []byte
 	res, err = bson.MarshalExtJSON(dbRes.Data[0], true, false)
 	if err != nil {
@@ -102,17 +92,6 @@ func getItems(path []string, k Keeper) ([]byte, error) {
 	if dbRes.GotItemCount == 0 {
 		res, _ := bson.MarshalExtJSON(bson.M{}, true, false)
 		return res, nil
-	}
-
-	// convert _id type from primitive.ObjectID to string
-	for i := range dbRes.Data {
-		oid := dbRes.Data[i]["_id"]
-		switch o := oid.(type) {
-		case primitive.ObjectID:
-			dbRes.Data[i]["_id"] = o.String()
-		default:
-			return nil, errors.New("type of _id is not ObjectID")
-		}
 	}
 
 	var res []byte
