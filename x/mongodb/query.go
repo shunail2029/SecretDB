@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const (
@@ -50,14 +51,19 @@ func GetItem(filter interface{}) (GetItemResult, error) {
 	defer cancel()
 	c := newConnection(ctx)
 
-	var res bson.M
-	err := c.collection(itemCollection).FindOne(context.Background(), filter).Decode(&res)
-	if err != nil {
+	var res []bson.M
+	err := c.collection(itemCollection).FindOne(context.Background(), filter).Decode(&res[0])
+	if err == mongo.ErrNoDocuments {
+		return GetItemResult{
+			GotItemCount: 0,
+			Data:         nil,
+		}, nil
+	} else if err != nil {
 		return GetItemResult{}, err
 	}
 	return GetItemResult{
 		GotItemCount: 1,
-		Data:         []bson.M{res},
+		Data:         res,
 	}, nil
 }
 
@@ -69,7 +75,12 @@ func GetItems(filter interface{}) (GetItemResult, error) {
 	c := newConnection(ctx)
 
 	cursor, err := c.collection(itemCollection).Find(context.Background(), filter)
-	if err != nil {
+	if err == mongo.ErrNoDocuments {
+		return GetItemResult{
+			GotItemCount: 0,
+			Data:         nil,
+		}, nil
+	} else if err != nil {
 		return GetItemResult{}, err
 	}
 

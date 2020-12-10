@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,9 +21,14 @@ func GetCmdGetItem(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			err := bson.UnmarshalExtJSON([]byte(args[0]), true, bson.M{})
+			var filter bson.M
+			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
 			if err != nil {
 				return err
+			}
+			_, ok := filter["_owner"]
+			if !ok {
+				return errors.New("owner must be specified")
 			}
 
 			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s", queryRoute, types.QueryGetItem, args[0]), nil)
@@ -47,9 +53,14 @@ func GetCmdGetItems(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			err := bson.UnmarshalExtJSON([]byte(args[0]), true, bson.M{})
+			var filter bson.M
+			err := bson.UnmarshalExtJSON([]byte(args[0]), true, filter)
 			if err != nil {
 				return err
+			}
+			_, ok := filter["_owner"]
+			if !ok {
+				return errors.New("owner must be specified")
 			}
 
 			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s", queryRoute, types.QueryGetItems, args[0]), nil)

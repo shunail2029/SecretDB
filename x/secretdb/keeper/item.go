@@ -2,7 +2,7 @@ package keeper
 
 import (
 	"bytes"
-	"fmt"
+	"errors"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/shunail2029/SecretDB/x/mongodb"
@@ -53,12 +53,16 @@ func getItem(path []string, k Keeper) ([]byte, error) {
 	}
 	_, ok := filter["_owner"]
 	if !ok {
-		return nil, fmt.Errorf("owner must be specified")
+		return nil, errors.New("owner must be specified")
 	}
 
 	dbRes, err := mongodb.GetItem(filter)
 	if err != nil {
 		return nil, err
+	}
+	if dbRes.GotItemCount == 0 {
+		res, _ := bson.MarshalExtJSON(bson.M{}, true, false)
+		return res, nil
 	}
 
 	var res []byte
@@ -78,12 +82,16 @@ func getItems(path []string, k Keeper) ([]byte, error) {
 	}
 	_, ok := filter["_owner"]
 	if !ok {
-		return nil, fmt.Errorf("owner must be specified")
+		return nil, errors.New("owner must be specified")
 	}
 
 	dbRes, err := mongodb.GetItems(filter)
 	if err != nil {
 		return nil, err
+	}
+	if dbRes.GotItemCount == 0 {
+		res, _ := bson.MarshalExtJSON(bson.M{}, true, false)
+		return res, nil
 	}
 
 	var res []byte

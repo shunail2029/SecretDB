@@ -10,8 +10,8 @@ import (
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
 	// this line is used by starport scaffolding # 1
 	r.HandleFunc("/secretdb/item", storeItemHandler(cliCtx)).Methods("POST")
-	r.HandleFunc("/secretdb/get-item/{key}", getItemHandler(cliCtx, "secretdb")).Methods("GET")
-	r.HandleFunc("/secretdb/get-items/{key}", getItemsHandler(cliCtx, "secretdb")).Methods("GET")
+	r.HandleFunc("/secretdb/item", getItemHandler(cliCtx, "secretdb")).Methods("GET")
+	r.HandleFunc("/secretdb/item", getItemsHandler(cliCtx, "secretdb")).Methods("GET")
 	r.HandleFunc("/secretdb/item", updateItemHandler(cliCtx)).Methods("PUT")
 	r.HandleFunc("/secretdb/item", updateItemsHandler(cliCtx)).Methods("PUT")
 	r.HandleFunc("/secretdb/item", deleteItemHandler(cliCtx)).Methods("DELETE")
