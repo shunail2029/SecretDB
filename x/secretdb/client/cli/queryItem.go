@@ -19,24 +19,15 @@ func GetCmdGetItem(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			var filter bson.M
-			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
+
+			err := bson.UnmarshalExtJSON([]byte(args[0]), true, bson.M{})
 			if err != nil {
 				return err
 			}
 
-			if filter == nil {
-				filter = make(bson.M)
-			}
-			filter["_owner"] = cliCtx.GetFromAddress()
-
-			fil, err := bson.MarshalExtJSON(filter, true, false)
+			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s", queryRoute, types.QueryGetItem, args[0]), nil)
 			if err != nil {
-				return err
-			}
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s", queryRoute, types.QueryGetItem, fil), nil)
-			if err != nil {
-				fmt.Printf("could not resolve item %s \n%s\n", filter, err.Error())
+				fmt.Printf("could not resolve item %s \n%s\n", args[0], err.Error())
 				return nil
 			}
 
@@ -55,24 +46,15 @@ func GetCmdGetItems(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			var filter bson.M
-			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
+
+			err := bson.UnmarshalExtJSON([]byte(args[0]), true, bson.M{})
 			if err != nil {
 				return err
 			}
 
-			if filter == nil {
-				filter = make(bson.M)
-			}
-			filter["_owner"] = cliCtx.GetFromAddress()
-
-			fil, err := bson.MarshalExtJSON(filter, true, false)
+			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s", queryRoute, types.QueryGetItems, args[0]), nil)
 			if err != nil {
-				return err
-			}
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s", queryRoute, types.QueryGetItems, fil), nil)
-			if err != nil {
-				fmt.Printf("could not resolve item %s \n%s\n", filter, err.Error())
+				fmt.Printf("could not resolve item %s \n%s\n", args[0], err.Error())
 				return nil
 			}
 

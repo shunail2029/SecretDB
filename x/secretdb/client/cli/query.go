@@ -27,15 +27,13 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	cmds := flags.GetCommands(
-		GetCmdGetItem(queryRoute, cdc),
-		GetCmdGetItems(queryRoute, cdc),
+	secretdbQueryCmd.AddCommand(
+		flags.GetCommands(
+			// this line is used by starport scaffolding # 1
+			GetCmdGetItem(queryRoute, cdc),
+			GetCmdGetItems(queryRoute, cdc),
+		)...,
 	)
-	for _, c := range cmds {
-		c.Flags().String(flags.FlagFrom, "", "Name or address of private key with which to sign")
-	}
-
-	secretdbQueryCmd.AddCommand(cmds...)
 
 	return secretdbQueryCmd
 }

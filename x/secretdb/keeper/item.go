@@ -16,18 +16,6 @@ func (k Keeper) StoreItem(item types.Item) (mongodb.StoreItemResult, error) {
 	return mongodb.StoreItem(data)
 }
 
-// GetItem returns the item information
-func (k Keeper) GetItem(iFil types.ItemFilter) (mongodb.GetItemResult, error) {
-	filter := insertOwner(iFil.Owner, iFil.Filter)
-	return mongodb.GetItem(filter)
-}
-
-// GetItems returns the item information
-func (k Keeper) GetItems(iFil types.ItemFilter) (mongodb.GetItemResult, error) {
-	filter := insertOwner(iFil.Owner, iFil.Filter)
-	return mongodb.GetItems(filter)
-}
-
 // UpdateItem sets a item
 func (k Keeper) UpdateItem(iFil types.ItemFilter, update bson.M) (mongodb.UpdateItemResult, error) {
 	filter := insertOwner(iFil.Owner, iFil.Filter)
