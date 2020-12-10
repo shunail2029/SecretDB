@@ -40,7 +40,7 @@ func GetCmdGetItem(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			var out bson.M
 			err = bson.UnmarshalExtJSON(res, true, &out)
 			if err != nil {
-				fmt.Println("failed to unmarshal response")
+				fmt.Printf("failed to unmarshal response\n%s\n", err.Error())
 			}
 			return cliCtx.PrintOutput(out)
 		},
@@ -75,7 +75,7 @@ func GetCmdGetItems(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			var out bson.M
 			err = bson.UnmarshalExtJSON(res, true, &out)
 			if err != nil {
-				fmt.Println("failed to unmarshal response")
+				fmt.Printf("failed to unmarshal response\n%s\n", err.Error())
 			}
 			return cliCtx.PrintOutput(out)
 		},
