@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"bytes"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/shunail2029/SecretDB/x/mongodb"
@@ -62,6 +63,11 @@ func getItem(path []string, k Keeper) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	_, ok := filter["_owner"]
+	if !ok {
+		return nil, fmt.Errorf("owner must be specified")
+	}
+
 	dbRes, err := mongodb.GetItem(filter)
 	if err != nil {
 		return nil, err
@@ -82,6 +88,11 @@ func getItems(path []string, k Keeper) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	_, ok := filter["_owner"]
+	if !ok {
+		return nil, fmt.Errorf("owner must be specified")
+	}
+
 	dbRes, err := mongodb.GetItems(filter)
 	if err != nil {
 		return nil, err
