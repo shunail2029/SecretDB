@@ -8,24 +8,20 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/shunail2029/secretdb/x/secretdb/types"
+	"github.com/shunail2029/SecretDB/x/secretdb/types"
 )
 
 // Keeper of the secretdb store
 type Keeper struct {
 	CoinKeeper bank.Keeper
-	storeKey   sdk.StoreKey
 	cdc        *codec.Codec
-	// paramspace types.ParamSubspace
 }
 
 // NewKeeper creates a secretdb keeper
-func NewKeeper(coinKeeper bank.Keeper, cdc *codec.Codec, key sdk.StoreKey) Keeper {
+func NewKeeper(coinKeeper bank.Keeper, cdc *codec.Codec) Keeper {
 	keeper := Keeper{
 		CoinKeeper: coinKeeper,
-		storeKey:   key,
 		cdc:        cdc,
-		// paramspace: paramspace.WithKeyTable(types.ParamKeyTable()),
 	}
 	return keeper
 }
@@ -34,26 +30,3 @@ func NewKeeper(coinKeeper bank.Keeper, cdc *codec.Codec, key sdk.StoreKey) Keepe
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
-
-// Get returns the pubkey from the adddress-pubkey relation
-// func (k Keeper) Get(ctx sdk.Context, key string) (/* TODO: Fill out this type */, error) {
-// 	store := ctx.KVStore(k.storeKey)
-// 	var item /* TODO: Fill out this type */
-// 	byteKey := []byte(key)
-// 	err := k.cdc.UnmarshalBinaryLengthPrefixed(store.Get(byteKey), &item)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return item, nil
-// }
-
-// func (k Keeper) set(ctx sdk.Context, key string, value /* TODO: fill out this type */ ) {
-// 	store := ctx.KVStore(k.storeKey)
-// 	bz := k.cdc.MustMarshalBinaryLengthPrefixed(value)
-// 	store.Set([]byte(key), bz)
-// }
-
-// func (k Keeper) delete(ctx sdk.Context, key string) {
-// 	store := ctx.KVStore(k.storeKey)
-// 	store.Delete([]byte(key))
-// }

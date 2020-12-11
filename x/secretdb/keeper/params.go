@@ -1,12 +1,13 @@
 package keeper
+
 /*
-// TODO: Define if your module needs Parameters, if not this can be deleted
+// FIXME: Define if your module needs Parameters, if not this can be deleted
 
 import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/shunail2029/secretdb/x/secretdb/types"
+	"github.com/shunail2029/SecretDB/x/secretdb/types"
 )
 
 // GetParams returns the total set of secretdb parameters.

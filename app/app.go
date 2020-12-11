@@ -22,22 +22,27 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
-	"github.com/shunail2029/secretdb/x/secretdb"
-	secretdbkeeper "github.com/shunail2029/secretdb/x/secretdb/keeper"
-	secretdbtypes "github.com/shunail2029/secretdb/x/secretdb/types"
-  // this line is used by starport scaffolding # 1
+	"github.com/shunail2029/SecretDB/x/secretdb"
+	secretdbkeeper "github.com/shunail2029/SecretDB/x/secretdb/keeper"
+	secretdbtypes "github.com/shunail2029/SecretDB/x/secretdb/types"
+
+	// this line is used by starport scaffolding # 1
 	"path/filepath"
+
 	"github.com/CosmWasm/wasmd/x/wasm"
-	"github.com/tendermint/tendermint/libs/cli"
-	"github.com/spf13/viper"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
+	"github.com/spf13/viper"
+	"github.com/tendermint/tendermint/libs/cli"
 )
 
 const appName = "secretdb"
 
 var (
+	// DefaultCLIHome shows path to home directory of CLI
 	DefaultCLIHome = os.ExpandEnv("$HOME/.secretdbcli")
+	// DefaultNodeHome show path to home directory of Node
 	DefaultNodeHome = os.ExpandEnv("$HOME/.secretdbd")
+	// ModuleBasics ...
 	ModuleBasics = module.NewBasicManager(
 		genutil.AppModuleBasic{},
 		auth.AppModuleBasic{},
@@ -46,20 +51,21 @@ var (
 		params.AppModuleBasic{},
 		supply.AppModuleBasic{},
 		secretdb.AppModuleBasic{},
-    // this line is used by starport scaffolding # 2
+		// this line is used by starport scaffolding # 2
 		distr.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 	)
 
 	maccPerms = map[string][]string{
-		auth.FeeCollectorName:     nil,
+		auth.FeeCollectorName: nil,
 		// this line is used by starport scaffolding # 2.1
-		distr.ModuleName: nil,
+		distr.ModuleName:          nil,
 		staking.BondedPoolName:    {supply.Burner, supply.Staking},
 		staking.NotBondedPoolName: {supply.Burner, supply.Staking},
 	}
 )
 
+// MakeCodec ...
 func MakeCodec() *codec.Codec {
 	var cdc = codec.New()
 
@@ -70,6 +76,7 @@ func MakeCodec() *codec.Codec {
 	return cdc.Seal()
 }
 
+// NewApp ...
 type NewApp struct {
 	*bam.BaseApp
 	cdc *codec.Codec
@@ -87,16 +94,17 @@ type NewApp struct {
 	supplyKeeper   supply.Keeper
 	paramsKeeper   params.Keeper
 	secretdbKeeper secretdbkeeper.Keeper
-  // this line is used by starport scaffolding # 3
-		distrKeeper    distr.Keeper
-		wasmKeeper    wasm.Keeper
-	mm *module.Manager
+	// this line is used by starport scaffolding # 3
+	distrKeeper distr.Keeper
+	wasmKeeper  wasm.Keeper
+	mm          *module.Manager
 
 	sm *module.SimulationManager
 }
 
 var _ simapp.App = (*NewApp)(nil)
 
+// NewInitApp ...
 func NewInitApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool,
 	invCheckPeriod uint, baseAppOptions ...func(*bam.BaseApp),
@@ -108,16 +116,16 @@ func NewInitApp(
 	bApp.SetAppVersion(version.Version)
 
 	keys := sdk.NewKVStoreKeys(
-    bam.MainStoreKey,
-    auth.StoreKey,
-    staking.StoreKey,
+		bam.MainStoreKey,
+		auth.StoreKey,
+		staking.StoreKey,
 		supply.StoreKey,
-    params.StoreKey,
-    secretdbtypes.StoreKey,
-    // this line is used by starport scaffolding # 5
+		params.StoreKey,
+		secretdbtypes.StoreKey,
+		// this line is used by starport scaffolding # 5
 		distr.StoreKey,
 		wasm.StoreKey,
-  )
+	)
 
 	tKeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
 
@@ -135,7 +143,7 @@ func NewInitApp(
 	app.subspaces[bank.ModuleName] = app.paramsKeeper.Subspace(bank.DefaultParamspace)
 	app.subspaces[staking.ModuleName] = app.paramsKeeper.Subspace(staking.DefaultParamspace)
 	// this line is used by starport scaffolding # 5.1
-		app.subspaces[distr.ModuleName] = app.paramsKeeper.Subspace(distr.DefaultParamspace)
+	app.subspaces[distr.ModuleName] = app.paramsKeeper.Subspace(distr.DefaultParamspace)
 
 	app.accountKeeper = auth.NewAccountKeeper(
 		app.cdc,
@@ -166,39 +174,40 @@ func NewInitApp(
 	)
 
 	// this line is used by starport scaffolding # 5.2
-		app.distrKeeper = distr.NewKeeper(
-			app.cdc, keys[distr.StoreKey], app.subspaces[distr.ModuleName], &stakingKeeper,
-			app.supplyKeeper, auth.FeeCollectorName, app.ModuleAccountAddrs(),
-		)
+	app.distrKeeper = distr.NewKeeper(
+		app.cdc, keys[distr.StoreKey], app.subspaces[distr.ModuleName], &stakingKeeper,
+		app.supplyKeeper, auth.FeeCollectorName, app.ModuleAccountAddrs(),
+	)
 
 	app.stakingKeeper = *stakingKeeper.SetHooks(
 		staking.NewMultiStakingHooks(
 			// this line is used by starport scaffolding # 5.3
-		app.distrKeeper.Hooks(),
+			app.distrKeeper.Hooks(),
 		),
 	)
 
 	app.secretdbKeeper = secretdbkeeper.NewKeeper(
 		app.bankKeeper,
 		app.cdc,
-		keys[secretdbtypes.StoreKey],
 	)
 
-  // this line is used by starport scaffolding # 4
-type WasmWrapper struct { Wasm wasm.Config `mapstructure:"wasm"`}
-		var wasmRouter = bApp.Router()
-		homeDir := viper.GetString(cli.HomeFlag)
-		wasmDir := filepath.Join(homeDir, "wasm")
+	// this line is used by starport scaffolding # 4
+	type WasmWrapper struct {
+		Wasm wasm.Config `mapstructure:"wasm"`
+	}
+	var wasmRouter = bApp.Router()
+	homeDir := viper.GetString(cli.HomeFlag)
+	wasmDir := filepath.Join(homeDir, "wasm")
 
-		wasmWrap := WasmWrapper{Wasm: wasm.DefaultWasmConfig()}
-		err := viper.Unmarshal(&wasmWrap)
-		if err != nil {
-			panic("error while reading wasm config: " + err.Error())
-		}
-		wasmConfig := wasmWrap.Wasm
-		supportedFeatures := "staking"
-		app.subspaces[wasm.ModuleName] = app.paramsKeeper.Subspace(wasm.DefaultParamspace)
-		app.wasmKeeper = wasm.NewKeeper(app.cdc, keys[wasm.StoreKey], app.subspaces[wasm.ModuleName], app.accountKeeper, app.bankKeeper, app.stakingKeeper, app.distrKeeper, wasmRouter, wasmDir, wasmConfig, supportedFeatures, nil, nil)
+	wasmWrap := WasmWrapper{Wasm: wasm.DefaultWasmConfig()}
+	err := viper.Unmarshal(&wasmWrap)
+	if err != nil {
+		panic("error while reading wasm config: " + err.Error())
+	}
+	wasmConfig := wasmWrap.Wasm
+	supportedFeatures := "staking"
+	app.subspaces[wasm.ModuleName] = app.paramsKeeper.Subspace(wasm.DefaultParamspace)
+	app.wasmKeeper = wasm.NewKeeper(app.cdc, keys[wasm.StoreKey], app.subspaces[wasm.ModuleName], app.accountKeeper, app.bankKeeper, app.stakingKeeper, app.distrKeeper, wasmRouter, wasmDir, wasmConfig, supportedFeatures, nil, nil)
 
 	app.mm = module.NewManager(
 		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
@@ -207,7 +216,7 @@ type WasmWrapper struct { Wasm wasm.Config `mapstructure:"wasm"`}
 		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
 		secretdb.NewAppModule(app.secretdbKeeper, app.bankKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.accountKeeper, app.supplyKeeper),
-    // this line is used by starport scaffolding # 6
+		// this line is used by starport scaffolding # 6
 		distr.NewAppModule(app.distrKeeper, app.accountKeeper, app.supplyKeeper, app.stakingKeeper),
 		wasm.NewAppModule(app.wasmKeeper),
 	)
@@ -227,7 +236,7 @@ type WasmWrapper struct { Wasm wasm.Config `mapstructure:"wasm"`}
 		secretdbtypes.ModuleName,
 		supply.ModuleName,
 		genutil.ModuleName,
-    // this line is used by starport scaffolding # 7
+		// this line is used by starport scaffolding # 7
 		wasm.ModuleName,
 	)
 
@@ -258,12 +267,15 @@ type WasmWrapper struct { Wasm wasm.Config `mapstructure:"wasm"`}
 	return app
 }
 
+// GenesisState ...
 type GenesisState map[string]json.RawMessage
 
+// NewDefaultGenesisState ...
 func NewDefaultGenesisState() GenesisState {
 	return ModuleBasics.DefaultGenesis()
 }
 
+// InitChainer ...
 func (app *NewApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState simapp.GenesisState
 
@@ -272,18 +284,22 @@ func (app *NewApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.
 	return app.mm.InitGenesis(ctx, genesisState)
 }
 
+// BeginBlocker ...
 func (app *NewApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
 	return app.mm.BeginBlock(ctx, req)
 }
 
+// EndBlocker ...
 func (app *NewApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	return app.mm.EndBlock(ctx, req)
 }
 
+// LoadHeight ...
 func (app *NewApp) LoadHeight(height int64) error {
 	return app.LoadVersion(height, app.keys[bam.MainStoreKey])
 }
 
+// ModuleAccountAddrs ...
 func (app *NewApp) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
@@ -293,14 +309,17 @@ func (app *NewApp) ModuleAccountAddrs() map[string]bool {
 	return modAccAddrs
 }
 
+// Codec ...
 func (app *NewApp) Codec() *codec.Codec {
 	return app.cdc
 }
 
+// SimulationManager ...
 func (app *NewApp) SimulationManager() *module.SimulationManager {
 	return app.sm
 }
 
+// GetMaccPerms ...
 func GetMaccPerms() map[string][]string {
 	modAccPerms := make(map[string][]string)
 	for k, v := range maccPerms {

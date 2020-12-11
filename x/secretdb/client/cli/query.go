@@ -13,7 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/shunail2029/secretdb/x/secretdb/types"
+	"github.com/shunail2029/SecretDB/x/secretdb/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
@@ -29,7 +29,9 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 	secretdbQueryCmd.AddCommand(
 		flags.GetCommands(
-      // this line is used by starport scaffolding # 1
+			// this line is used by starport scaffolding # 1
+			GetCmdGetItem(queryRoute, cdc),
+			GetCmdGetItems(queryRoute, cdc),
 		)...,
 	)
 

@@ -57,31 +57,31 @@ func (app *NewApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []str
 	}
 
 	// this line is used by starport scaffolding # 1
-		/* Handle fee distribution state. */
+	/* Handle fee distribution state. */
 
-		// withdraw all validator commission
-		app.stakingKeeper.IterateValidators(ctx, func(_ int64, val staking.ValidatorI) (stop bool) {
-			_, err := app.distrKeeper.WithdrawValidatorCommission(ctx, val.GetOperator())
-			if err != nil {
-				log.Fatal(err)
-			}
-			return false
-		})
-
-		// withdraw all delegator rewards
-		dels := app.stakingKeeper.GetAllDelegations(ctx)
-		for _, delegation := range dels {
-			_, err := app.distrKeeper.WithdrawDelegationRewards(ctx, delegation.DelegatorAddress, delegation.ValidatorAddress)
-			if err != nil {
-				log.Fatal(err)
-			}
+	// withdraw all validator commission
+	app.stakingKeeper.IterateValidators(ctx, func(_ int64, val staking.ValidatorI) (stop bool) {
+		_, err := app.distrKeeper.WithdrawValidatorCommission(ctx, val.GetOperator())
+		if err != nil {
+			log.Fatal(err)
 		}
+		return false
+	})
 
-		// clear validator slash events
-		app.distrKeeper.DeleteAllValidatorSlashEvents(ctx)
+	// withdraw all delegator rewards
+	dels := app.stakingKeeper.GetAllDelegations(ctx)
+	for _, delegation := range dels {
+		_, err := app.distrKeeper.WithdrawDelegationRewards(ctx, delegation.DelegatorAddress, delegation.ValidatorAddress)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 
-		// clear validator historical rewards
-		app.distrKeeper.DeleteAllValidatorHistoricalRewards(ctx)
+	// clear validator slash events
+	app.distrKeeper.DeleteAllValidatorSlashEvents(ctx)
+
+	// clear validator historical rewards
+	app.distrKeeper.DeleteAllValidatorHistoricalRewards(ctx)
 
 	// set context height to zero
 	height := ctx.BlockHeight()
@@ -101,11 +101,11 @@ func (app *NewApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList []str
 	})
 
 	// this line is used by starport scaffolding # 3
-		// reinitialize all delegations
-		for _, del := range dels {
-			app.distrKeeper.Hooks().BeforeDelegationCreated(ctx, del.DelegatorAddress, del.ValidatorAddress)
-			app.distrKeeper.Hooks().AfterDelegationModified(ctx, del.DelegatorAddress, del.ValidatorAddress)
-		}
+	// reinitialize all delegations
+	for _, del := range dels {
+		app.distrKeeper.Hooks().BeforeDelegationCreated(ctx, del.DelegatorAddress, del.ValidatorAddress)
+		app.distrKeeper.Hooks().AfterDelegationModified(ctx, del.DelegatorAddress, del.ValidatorAddress)
+	}
 
 	// reset context height
 	ctx = ctx.WithBlockHeight(height)

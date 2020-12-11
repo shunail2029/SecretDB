@@ -13,10 +13,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/shunail2029/secretdb/x/secretdb/client/cli"
-	"github.com/shunail2029/secretdb/x/secretdb/client/rest"
-	"github.com/shunail2029/secretdb/x/secretdb/keeper"
-	"github.com/shunail2029/secretdb/x/secretdb/types"
+	"github.com/shunail2029/SecretDB/x/secretdb/client/cli"
+	"github.com/shunail2029/SecretDB/x/secretdb/client/rest"
+	"github.com/shunail2029/SecretDB/x/secretdb/keeper"
+	"github.com/shunail2029/SecretDB/x/secretdb/types"
 )
 
 // Type check to ensure the interface is properly implemented
@@ -77,8 +77,6 @@ type AppModule struct {
 
 	keeper     keeper.Keeper
 	coinKeeper bank.Keeper
-	// TODO: Add keepers that your application depends on
-
 }
 
 // NewAppModule creates a new AppModule object
@@ -87,7 +85,6 @@ func NewAppModule(k keeper.Keeper, bankKeeper bank.Keeper) AppModule {
 		AppModuleBasic: AppModuleBasic{},
 		keeper:         k,
 		coinKeeper:     bankKeeper,
-		// TODO: Add keepers that your application depends on
 	}
 }
 

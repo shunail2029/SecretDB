@@ -5,7 +5,7 @@ package types
 // 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 // )
 
-// TODO: Describe your actions, these will implment the interface of `sdk.Msg`
+// FIXME: Describe your actions, these will implment the interface of `sdk.Msg`
 /*
 // verify interface at compile time
 var _ sdk.Msg = &Msg<Action>{}

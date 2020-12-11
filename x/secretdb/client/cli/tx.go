@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/shunail2029/secretdb/x/secretdb/types"
+	"github.com/shunail2029/SecretDB/x/secretdb/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -22,7 +22,12 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 	}
 
 	secretdbTxCmd.AddCommand(flags.PostCommands(
-    // this line is used by starport scaffolding # 1
+		// this line is used by starport scaffolding # 1
+		GetCmdStoreItem(cdc),
+		GetCmdUpdateItem(cdc),
+		GetCmdUpdateItems(cdc),
+		GetCmdDeleteItem(cdc),
+		GetCmdDeleteItems(cdc),
 	)...)
 
 	return secretdbTxCmd
