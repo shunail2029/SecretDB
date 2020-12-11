@@ -11,7 +11,7 @@ Cosmos SDK を利用して秘匿化ブロックチェーンデータベースを
 ## 構成
 
 ```bash
-secretdb/
+SecretDB/
 ├── app
 │   ├── app.go
 │   ├── export.go
@@ -24,8 +24,8 @@ secretdb/
 │       └── main.go
 ├── config.yml
 ├── go.mod
-├── go.sum
-├── vue : フロントエンド
+├── startup.sh : 初期化用スクリプト
+├── vue : フロントエンド（未実装）
 │   ├── README.md
 │   ├── babel.config.js
 │   ├── package-lock.json
@@ -55,7 +55,8 @@ secretdb/
         │   │   ├── query.go
         │   │   ├── queryItem.go
         │   │   ├── tx.go
-        │   │   └── txItem.go
+        │   │   ├── txItem.go
+        │   │   └── utils.go
         │   └── rest : REST
         │       ├── queryItem.go
         │       ├── rest.go
