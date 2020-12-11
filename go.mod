@@ -13,4 +13,5 @@ require (
 	github.com/tendermint/tm-db v0.5.1
 	go.mongodb.org/mongo-driver v1.4.2
 	golang.org/x/net v0.0.0-20200520182314-0ba52f642ac2 // indirect
+	gopkg.in/yaml.v2 v2.3.0
 )

@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -38,16 +37,12 @@ func GetCmdGetItem(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var bm bson.M
-			err = bson.UnmarshalExtJSON(res, true, &bm)
+			var out bson.M
+			err = bson.UnmarshalExtJSON(res, true, &out)
 			if err != nil {
-				fmt.Printf("failed to unmarshal response\n%s\n", err.Error())
+				return err
 			}
-			out, err := json.MarshalIndent(bm, "", "  ")
-			if err != nil {
-				fmt.Printf("failed to marshal json\n%s\n", err.Error())
-			}
-			return cliCtx.PrintOutput(string(out))
+			return printOutput(out, cliCtx.OutputFormat, cliCtx.Indent)
 		},
 	}
 }
@@ -77,16 +72,12 @@ func GetCmdGetItems(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var bm bson.M
-			err = bson.UnmarshalExtJSON(res, true, &bm)
+			var out bson.M
+			err = bson.UnmarshalExtJSON(res, true, &out)
 			if err != nil {
-				fmt.Printf("failed to unmarshal response\n%s\n", err.Error())
+				return err
 			}
-			out, err := json.MarshalIndent(bm, "", "  ")
-			if err != nil {
-				fmt.Printf("failed to marshal json\n%s\n", err.Error())
-			}
-			return cliCtx.PrintOutput(fmt.Sprintf("%v", out))
+			return printOutput(out, cliCtx.OutputFormat, cliCtx.Indent)
 		},
 	}
 }
