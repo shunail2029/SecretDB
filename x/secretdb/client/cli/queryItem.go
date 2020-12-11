@@ -72,12 +72,20 @@ func GetCmdGetItems(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var out bson.M
-			err = bson.UnmarshalExtJSON(res, true, &out)
-			if err != nil {
-				return err
+			idxs := findItemBeginnings(res)
+			for _, idx := range idxs {
+				var out bson.M
+				err = bson.UnmarshalExtJSON(res[idx:], true, &out)
+				if err != nil {
+					return err
+				}
+				err = printOutput(out, cliCtx.OutputFormat, cliCtx.Indent)
+				if err != nil {
+					return err
+				}
 			}
-			return printOutput(out, cliCtx.OutputFormat, cliCtx.Indent)
+
+			return nil
 		},
 	}
 }
