@@ -94,9 +94,6 @@ func queryCmd(cdc *amino.Codec) *cobra.Command {
 		flags.LineBreak,
 	)
 
-	// to use "from" flag in get-item and get-items command
-	queryCmd.Flags().String(flags.FlagFrom, "", "Name or address of private key with which to sign")
-
 	// add modules' query commands
 	app.ModuleBasics.AddQueryCommands(queryCmd, cdc)
 
