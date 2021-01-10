@@ -7,7 +7,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/shunail2029/SecretDB/x/mongodb"
 	"github.com/shunail2029/SecretDB/x/secretdb/types"
-	"github.com/tendermint/tendermint/crypto/secp256k1"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -47,17 +46,17 @@ func (k Keeper) DeleteItems(iFil types.ItemFilter) (mongodb.DeleteItemResult, er
 
 // getItem returns the item information
 func getItem(path []string, k Keeper) ([]byte, error) {
-	msg := []byte(path[0])
-	var pubkey secp256k1.PubKeySecp256k1
-	copy(pubkey[:], path[1]) // XXX: only secp256k1 is accepted now
-	sigBytes := []byte(path[2])
-	if pubkey.VerifyBytes(msg, sigBytes) {
+	msg, pubkey, sigBytes, err := pathUnescape(path, k)
+	if err != nil {
+		return nil, err
+	}
+	if !pubkey.VerifyBytes(msg, sigBytes) {
 		return nil, errors.New("signature verification failed")
 	}
 
 	// insert "_owner" to filter
 	var filter bson.M
-	err := bson.UnmarshalExtJSON(msg, true, &filter)
+	err = bson.UnmarshalExtJSON(msg, true, &filter)
 	if err != nil {
 		return nil, err
 	}
@@ -83,17 +82,17 @@ func getItem(path []string, k Keeper) ([]byte, error) {
 
 // GetItems returns the item information
 func getItems(path []string, k Keeper) ([]byte, error) {
-	msg := []byte(path[0])
-	var pubkey secp256k1.PubKeySecp256k1
-	copy(pubkey[:], path[1]) // XXX: only secp256k1 is accepted now
-	sigBytes := []byte(path[2])
-	if pubkey.VerifyBytes(msg, sigBytes) {
+	msg, pubkey, sigBytes, err := pathUnescape(path, k)
+	if err != nil {
+		return nil, err
+	}
+	if !pubkey.VerifyBytes(msg, sigBytes) {
 		return nil, errors.New("signature verification failed")
 	}
 
 	// insert "_owner" to filter
 	var filter bson.M
-	err := bson.UnmarshalExtJSON(msg, true, &filter)
+	err = bson.UnmarshalExtJSON(msg, true, &filter)
 	if err != nil {
 		return nil, err
 	}
@@ -163,13 +162,4 @@ func (k Keeper) ItemExists(iFil types.ItemFilter) bool {
 	filter := insertOwner(iFil.Owner, iFil.Filter)
 	res, err := mongodb.GetItem(filter)
 	return err == nil && res.GotItemCount > 0
-}
-
-// if filter has "_owner", change it to owner, else add "_owner" to filter
-func insertOwner(owner sdk.AccAddress, m bson.M) bson.M {
-	if m == nil {
-		m = make(bson.M)
-	}
-	m["_owner"] = owner.String()
-	return m
 }

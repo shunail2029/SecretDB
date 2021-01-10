@@ -41,17 +41,22 @@ func GetCmdGetItem(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			}
 
 			// create keybase
-			keybase, err := crypto.NewKeyring(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), bufio.NewReader(cmd.InOrStdin()))
+			keybase, err := crypto.NewKeyring(
+				sdk.KeyringServiceName(),
+				viper.GetString(flags.FlagKeyringBackend),
+				viper.GetString(flags.FlagHome),
+				bufio.NewReader(cmd.InOrStdin()),
+			)
 			if err != nil {
-				fmt.Printf("failed to make keybase\n%s\n", err.Error())
+				fmt.Printf("failed to create keybase\n%s\n", err.Error())
 				return nil
 			}
 
-			// get owner from cli and create signature
+			// get owner from cli and generate signature
 			fromName := cliCtx.GetFromName()
 			pubkey, sig, err := makeSignature(keybase, fromName, keys.DefaultKeyPass, []byte(args[0]))
 			if err != nil {
-				fmt.Printf("failed to make signature\n%s\n", err.Error())
+				fmt.Printf("failed to generate signature\n%s\n", err.Error())
 				return nil
 			}
 
@@ -107,17 +112,22 @@ func GetCmdGetItems(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			}
 
 			// create keybase
-			keybase, err := crypto.NewKeyring(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), bufio.NewReader(cmd.InOrStdin()))
+			keybase, err := crypto.NewKeyring(
+				sdk.KeyringServiceName(),
+				viper.GetString(flags.FlagKeyringBackend),
+				viper.GetString(flags.FlagHome),
+				bufio.NewReader(cmd.InOrStdin()),
+			)
 			if err != nil {
-				fmt.Printf("failed to make keybase\n%s\n", err.Error())
+				fmt.Printf("failed to create keybase\n%s\n", err.Error())
 				return nil
 			}
 
-			// get owner from cli and create signature
+			// get owner from cli and generate signature
 			fromName := cliCtx.GetFromName()
 			pubkey, sig, err := makeSignature(keybase, fromName, keys.DefaultKeyPass, []byte(args[0]))
 			if err != nil {
-				fmt.Printf("failed to make signature\n%s\n", err.Error())
+				fmt.Printf("failed to generate signature\n%s\n", err.Error())
 				return nil
 			}
 
