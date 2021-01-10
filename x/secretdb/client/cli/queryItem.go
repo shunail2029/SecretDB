@@ -68,8 +68,10 @@ func GetCmdGetItem(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			return printOutput(out, cliCtx.OutputFormat, cliCtx.Indent)
 		},
 	}
-	// to use "from" flag in get-item and get-items command
+	// to generate signature in get-item and get-items command
 	cmd.Flags().String(flags.FlagFrom, "", "Name or address of private key with which to sign")
+	cmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|test)")
+	viper.BindPFlag(flags.FlagKeyringBackend, cmd.Flags().Lookup(flags.FlagKeyringBackend))
 	return cmd
 }
 
@@ -132,5 +134,7 @@ func GetCmdGetItems(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	}
 	// to use "from" flag in get-item and get-items command
 	cmd.Flags().String(flags.FlagFrom, "", "Name or address of private key with which to sign")
+	cmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|test)")
+	viper.BindPFlag(flags.FlagKeyringBackend, cmd.Flags().Lookup(flags.FlagKeyringBackend))
 	return cmd
 }
