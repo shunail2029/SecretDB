@@ -3,6 +3,7 @@ package cli
 import (
 	"bufio"
 	"fmt"
+	"net/url"
 
 	"github.com/spf13/viper"
 
@@ -54,7 +55,17 @@ func GetCmdGetItem(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s/%s/%s", queryRoute, types.QueryGetItem, args[0], pubkey.Bytes(), sig), nil)
+			res, _, err := cliCtx.QueryWithData(
+				fmt.Sprintf(
+					"custom/%s/%s/%s/%s/%s",
+					queryRoute,
+					types.QueryGetItem,
+					url.PathEscape(args[0]),
+					url.PathEscape(string(pubkey.Bytes())),
+					url.PathEscape(string(sig)),
+				),
+				nil,
+			)
 			if err != nil {
 				fmt.Printf("could not resolve item %s \n%s\n", args[0], err.Error())
 				return nil
@@ -110,7 +121,17 @@ func GetCmdGetItems(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s/%s/%s", queryRoute, types.QueryGetItems, args[0], pubkey.Bytes(), sig), nil)
+			res, _, err := cliCtx.QueryWithData(
+				fmt.Sprintf(
+					"custom/%s/%s/%s/%s/%s",
+					queryRoute,
+					types.QueryGetItems,
+					url.PathEscape(args[0]),
+					url.PathEscape(string(pubkey.Bytes())),
+					url.PathEscape(string(sig)),
+				),
+				nil,
+			)
 			if err != nil {
 				fmt.Printf("could not resolve item %s\n%s\n", args[0], err.Error())
 				return nil
