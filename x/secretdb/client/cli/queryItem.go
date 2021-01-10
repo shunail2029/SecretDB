@@ -1,13 +1,19 @@
 package cli
 
 import (
-	"errors"
+	"bufio"
 	"fmt"
+
+	"github.com/spf13/viper"
 
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
+	crypto "github.com/cosmos/cosmos-sdk/crypto/keys"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/shunail2029/SecretDB/x/secretdb/types"
 	"github.com/spf13/cobra"
 )
@@ -26,12 +32,23 @@ func GetCmdGetItem(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			_, ok := filter["_owner"]
-			if !ok {
-				return errors.New("owner must be specified")
+
+			// create keybase
+			keybase, err := crypto.NewKeyring(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), bufio.NewReader(cmd.InOrStdin()))
+			if err != nil {
+				fmt.Printf("failed to make keybase\n%s\n", err.Error())
+				return nil
 			}
 
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s", queryRoute, types.QueryGetItem, args[0]), nil)
+			// get owner from cli and create signature
+			fromName := cliCtx.GetFromName()
+			pubkey, sig, err := makeSignature(keybase, fromName, keys.DefaultKeyPass, []byte(args[0]))
+			if err != nil {
+				fmt.Printf("failed to make signature\n%s\n", err.Error())
+				return nil
+			}
+
+			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s/%s/%s", queryRoute, types.QueryGetItem, args[0], pubkey.Bytes(), sig), nil)
 			if err != nil {
 				fmt.Printf("could not resolve item %s \n%s\n", args[0], err.Error())
 				return nil
@@ -61,14 +78,25 @@ func GetCmdGetItems(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			_, ok := filter["_owner"]
-			if !ok {
-				return errors.New("owner must be specified")
+
+			// create keybase
+			keybase, err := crypto.NewKeyring(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), bufio.NewReader(cmd.InOrStdin()))
+			if err != nil {
+				fmt.Printf("failed to make keybase\n%s\n", err.Error())
+				return nil
 			}
 
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s", queryRoute, types.QueryGetItems, args[0]), nil)
+			// get owner from cli and create signature
+			fromName := cliCtx.GetFromName()
+			pubkey, sig, err := makeSignature(keybase, fromName, keys.DefaultKeyPass, []byte(args[0]))
 			if err != nil {
-				fmt.Printf("could not resolve item %s \n%s\n", args[0], err.Error())
+				fmt.Printf("failed to make signature\n%s\n", err.Error())
+				return nil
+			}
+
+			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s/%s/%s/%s", queryRoute, types.QueryGetItems, args[0], pubkey.Bytes(), sig), nil)
+			if err != nil {
+				fmt.Printf("could not resolve item %s\n%s\n", args[0], err.Error())
 				return nil
 			}
 

@@ -13,8 +13,10 @@ func getItemHandler(cliCtx context.CLIContext, storeName string) http.HandlerFun
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		filter := vars["filter"]
+		pubkey := vars["pubkey"]
+		sig := vars["sig"]
 
-		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/get-item/%s", storeName, filter), nil)
+		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/get-item/%s/%s/%s", storeName, filter, pubkey, sig), nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
 			return
@@ -27,8 +29,10 @@ func getItemsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFu
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		filter := vars["filter"]
+		pubkey := vars["pubkey"]
+		sig := vars["sig"]
 
-		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/get-items/%s", storeName, filter), nil)
+		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/get-items/%s/%s/%s", storeName, filter, pubkey, sig), nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
 			return
