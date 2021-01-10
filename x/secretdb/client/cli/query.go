@@ -27,9 +27,6 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	// to use "from" flag in get-item and get-items command
-	secretdbQueryCmd.Flags().String(flags.FlagFrom, "", "Name or address of private key with which to sign")
-
 	secretdbQueryCmd.AddCommand(
 		flags.GetCommands(
 			// this line is used by starport scaffolding # 1

@@ -14,13 +14,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	crypto "github.com/cosmos/cosmos-sdk/crypto/keys"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/shunail2029/SecretDB/x/secretdb/types"
 	"github.com/spf13/cobra"
 )
 
 // GetCmdGetItem ...
 func GetCmdGetItem(queryRoute string, cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "get-item [filter]",
 		Short: "Query a item by filter",
 		Args:  cobra.ExactArgs(1),
@@ -31,6 +32,11 @@ func GetCmdGetItem(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
 			if err != nil {
 				return err
+			}
+
+			owner := cliCtx.GetFromAddress()
+			if owner.Empty() {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "owner can't be empty")
 			}
 
 			// create keybase
@@ -62,11 +68,14 @@ func GetCmdGetItem(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			return printOutput(out, cliCtx.OutputFormat, cliCtx.Indent)
 		},
 	}
+	// to use "from" flag in get-item and get-items command
+	cmd.Flags().String(flags.FlagFrom, "", "Name or address of private key with which to sign")
+	return cmd
 }
 
 // GetCmdGetItems ...
 func GetCmdGetItems(queryRoute string, cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "get-items [filter]",
 		Short: "Query some items by filter",
 		Args:  cobra.ExactArgs(1),
@@ -77,6 +86,11 @@ func GetCmdGetItems(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			err := bson.UnmarshalExtJSON([]byte(args[0]), true, &filter)
 			if err != nil {
 				return err
+			}
+
+			owner := cliCtx.GetFromAddress()
+			if owner.Empty() {
+				return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "owner can't be empty")
 			}
 
 			// create keybase
@@ -116,4 +130,7 @@ func GetCmdGetItems(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			return nil
 		},
 	}
+	// to use "from" flag in get-item and get-items command
+	cmd.Flags().String(flags.FlagFrom, "", "Name or address of private key with which to sign")
+	return cmd
 }
