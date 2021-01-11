@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/shunail2029/SecretDB/x/mongodb"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -16,6 +14,7 @@ import (
 	dbm "github.com/tendermint/tm-db"
 
 	"github.com/shunail2029/SecretDB/app"
+	"github.com/shunail2029/SecretDB/x/mongodb"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client/debug"
@@ -61,9 +60,6 @@ func main() {
 
 	server.AddCommands(ctx, cdc, rootCmd, newApp, exportAppStateAndTMValidators)
 
-	// set config of MongoDB
-	mongodb.SetURI(viper.GetString(mongodb.FlagDBURI))
-
 	// prepare and add flags
 	executor := cli.PrepareBaseCmd(rootCmd, "AU", app.DefaultNodeHome)
 	rootCmd.PersistentFlags().UintVar(&invCheckPeriod, flagInvCheckPeriod,
@@ -84,6 +80,11 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application
 	if err != nil {
 		panic(err)
 	}
+
+	// set config of MongoDB
+	viper.SetDefault(mongodb.FlagDBURI, "mongodb://localhost:27017")
+	mongodb.SetURI(viper.GetString(mongodb.FlagDBURI))
+
 	return app.NewInitApp(
 		logger, db, traceStore, true, invCheckPeriod,
 		baseapp.SetPruning(pruningOpts),
