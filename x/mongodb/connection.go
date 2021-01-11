@@ -14,7 +14,6 @@ type Connection struct {
 }
 
 // newConnection is a constructor of Connection
-// TODO: enable to change URL of local MongoDB
 func newConnection(ctx context.Context) *Connection {
 	c := new(Connection)
 
@@ -30,7 +29,7 @@ func newConnection(ctx context.Context) *Connection {
 // create connection to local database
 func (c *Connection) connect(ctx context.Context) error {
 	var err error
-	c.clt, err = mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
+	c.clt, err = mongo.Connect(ctx, options.Client().ApplyURI(dbURI))
 	if err != nil {
 		return err
 	}

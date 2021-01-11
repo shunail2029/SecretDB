@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 
+	"github.com/shunail2029/SecretDB/x/mongodb"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -58,6 +60,9 @@ func main() {
 	rootCmd.AddCommand(debug.Cmd(cdc))
 
 	server.AddCommands(ctx, cdc, rootCmd, newApp, exportAppStateAndTMValidators)
+
+	// set config of MongoDB
+	mongodb.SetURI(viper.GetString(mongodb.FlagDBURI))
 
 	// prepare and add flags
 	executor := cli.PrepareBaseCmd(rootCmd, "AU", app.DefaultNodeHome)
