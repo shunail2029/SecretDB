@@ -2,6 +2,7 @@ package secretdb
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,6 +14,11 @@ import (
 
 // Handle a message to store item
 func handleMsgStoreItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgStoreItem) (*sdk.Result, error) {
+	// check sender is parent chain
+	if types.IsChild && !types.ParentAccount.Equals(msg.GetSigners()[0]) {
+		return nil, errors.New("tx from parent chain is acceptable")
+	}
+
 	var data bson.M
 	err := bson.UnmarshalExtJSON([]byte(msg.Data), true, &data)
 	if err != nil {

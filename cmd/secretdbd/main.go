@@ -15,6 +15,7 @@ import (
 
 	"github.com/shunail2029/SecretDB/app"
 	"github.com/shunail2029/SecretDB/x/mongodb"
+	"github.com/shunail2029/SecretDB/x/secretdb/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client/debug"
@@ -84,6 +85,14 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application
 	// set config of MongoDB
 	viper.SetDefault(mongodb.FlagDBURI, "mongodb://localhost:27017")
 	mongodb.SetURI(viper.GetString(mongodb.FlagDBURI))
+
+	// set config of parent chain
+	viper.SetDefault(types.FlagIsChild, false)
+	viper.SetDefault(types.FlagParentAddress, "")
+	err = types.SetParentParams(viper.GetBool(types.FlagIsChild), viper.GetString(types.FlagParentAddress))
+	if err != nil {
+		panic(err)
+	}
 
 	return app.NewInitApp(
 		logger, db, traceStore, true, invCheckPeriod,
