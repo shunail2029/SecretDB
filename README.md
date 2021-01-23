@@ -8,6 +8,8 @@ Cosmos SDK を利用して秘匿化ブロックチェーンデータベースを
 - 秘匿化 : Intel SGX + Graphene
 - データベース : MongoDB + MapReduce
 
+***秘匿化は未実装***
+
 ## 構成
 
 ```bash
@@ -118,25 +120,28 @@ $ mongo
 secretdbd unsafe-reset-all
 
 # genesis.jsonの作成
-secretdbd init mynode --chain-id test1
+secretdbd init mynode --chain-id test-child1
 
 # CLIの設定
 secretdbcli config keyring-backend test
-secretdbcli config chain-id test1
+secretdbcli config chain-id test-child1
 secretdbcli config output json
 secretdbcli config indent true
 secretdbcli config trust-node true
 
 # 鍵の生成
+# validatorはmaster chainのvalidatorと同一のものとする
+secretdbcli keys add validator
 secretdbcli keys add user1
 secretdbcli keys add user2
 
 # genesis.jsonにアカウントを追加
-secretdbd add-genesis-account $(secretdbcli keys show user1 -a) 1000token,100000000stake
+secretdbd add-genesis-account $(secretdbcli keys show validator -a) 1000token,100000000stake
+secretdbd add-genesis-account $(secretdbcli keys show user1 -a) 1000token
 secretdbd add-genesis-account $(secretdbcli keys show user2 -a) 1000token
 
 # genesis.jsonに初期トランザクションを追加
-secretdbd gentx --name user1 --keyring-backend test
+secretdbd gentx --name validator --keyring-backend test
 secretdbd collect-gentxs
 
 # 起動
