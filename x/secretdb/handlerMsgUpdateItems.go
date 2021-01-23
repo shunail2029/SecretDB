@@ -14,8 +14,10 @@ import (
 
 // Handle a message to update some items
 func handleMsgUpdateItems(ctx sdk.Context, k keeper.Keeper, msg types.MsgUpdateItems) (*sdk.Result, error) {
+	isChild := types.IsChild
+
 	// check sender is parent chain
-	if types.IsChild && !types.ParentAccount.Equals(msg.GetSigners()[0]) {
+	if isChild && !types.ParentAccount.Equals(msg.GetSigners()[0]) {
 		return nil, errors.New("tx from parent chain is acceptable")
 	}
 
@@ -34,12 +36,12 @@ func handleMsgUpdateItems(ctx sdk.Context, k keeper.Keeper, msg types.MsgUpdateI
 		Filter: filter,
 	}
 
-	if !k.ItemExists(iFil) {
+	if !k.ItemExists(iFil, !isChild) {
 		filter, _ := bson.MarshalExtJSON(iFil.Filter, true, false)
 		return nil, fmt.Errorf("item not found with filter: %s", string(filter)) // XXX: better error might exist
 	}
 
-	res, err := k.UpdateItems(iFil, update)
+	res, err := k.UpdateItems(iFil, update, !isChild)
 	if err != nil {
 		return nil, err
 	}

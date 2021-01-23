@@ -9,7 +9,11 @@ import (
 )
 
 // if filter has "_owner", change it to owner, else add "_owner" to filter
-func insertOwner(owner sdk.AccAddress, m bson.M) bson.M {
+func insertOwner(owner sdk.AccAddress, m bson.M, checkOwner bool) bson.M {
+	if !checkOwner {
+		return m
+	}
+
 	if m == nil {
 		m = make(bson.M)
 	}

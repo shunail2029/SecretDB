@@ -14,8 +14,10 @@ import (
 
 // Handle a message to store item
 func handleMsgStoreItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgStoreItem) (*sdk.Result, error) {
+	isChild := types.IsChild
+
 	// check sender is parent chain
-	if types.IsChild && !types.ParentAccount.Equals(msg.GetSigners()[0]) {
+	if isChild && !types.ParentAccount.Equals(msg.GetSigners()[0]) {
 		return nil, errors.New("tx from parent chain is acceptable")
 	}
 
@@ -29,7 +31,7 @@ func handleMsgStoreItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgStoreItem
 		Owner: msg.Owner,
 		Data:  data,
 	}
-	res, err := k.StoreItem(item)
+	res, err := k.StoreItem(item, !isChild)
 	if err != nil {
 		return nil, err
 	}

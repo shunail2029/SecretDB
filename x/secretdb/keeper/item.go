@@ -11,32 +11,32 @@ import (
 )
 
 // StoreItem stores a item
-func (k Keeper) StoreItem(item types.Item) (mongodb.StoreItemResult, error) {
-	data := insertOwner(item.Owner, item.Data)
+func (k Keeper) StoreItem(item types.Item, checkOwner bool) (mongodb.StoreItemResult, error) {
+	data := insertOwner(item.Owner, item.Data, checkOwner)
 	return mongodb.StoreItem(data)
 }
 
 // UpdateItem sets a item
-func (k Keeper) UpdateItem(iFil types.ItemFilter, update bson.M) (mongodb.UpdateItemResult, error) {
-	filter := insertOwner(iFil.Owner, iFil.Filter)
+func (k Keeper) UpdateItem(iFil types.ItemFilter, update bson.M, checkOwner bool) (mongodb.UpdateItemResult, error) {
+	filter := insertOwner(iFil.Owner, iFil.Filter, checkOwner)
 	return mongodb.UpdateItem(filter, update)
 }
 
 // UpdateItems sets some items
-func (k Keeper) UpdateItems(iFil types.ItemFilter, update bson.M) (mongodb.UpdateItemResult, error) {
-	filter := insertOwner(iFil.Owner, iFil.Filter)
+func (k Keeper) UpdateItems(iFil types.ItemFilter, update bson.M, checkOwner bool) (mongodb.UpdateItemResult, error) {
+	filter := insertOwner(iFil.Owner, iFil.Filter, checkOwner)
 	return mongodb.UpdateItems(filter, update)
 }
 
 // DeleteItem deletes a item
-func (k Keeper) DeleteItem(iFil types.ItemFilter) (mongodb.DeleteItemResult, error) {
-	filter := insertOwner(iFil.Owner, iFil.Filter)
+func (k Keeper) DeleteItem(iFil types.ItemFilter, checkOwner bool) (mongodb.DeleteItemResult, error) {
+	filter := insertOwner(iFil.Owner, iFil.Filter, checkOwner)
 	return mongodb.DeleteItem(filter)
 }
 
 // DeleteItems deletes some items
-func (k Keeper) DeleteItems(iFil types.ItemFilter) (mongodb.DeleteItemResult, error) {
-	filter := insertOwner(iFil.Owner, iFil.Filter)
+func (k Keeper) DeleteItems(iFil types.ItemFilter, checkOwner bool) (mongodb.DeleteItemResult, error) {
+	filter := insertOwner(iFil.Owner, iFil.Filter, checkOwner)
 	return mongodb.DeleteItems(filter)
 }
 
@@ -45,7 +45,7 @@ func (k Keeper) DeleteItems(iFil types.ItemFilter) (mongodb.DeleteItemResult, er
 //
 
 // getItem returns the item information
-func getItem(path []string, k Keeper) ([]byte, error) {
+func getItem(path []string, k Keeper, checkOwner bool) ([]byte, error) {
 	msg, pubkey, sigBytes, err := pathUnescape(path, k)
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func getItem(path []string, k Keeper) ([]byte, error) {
 		return nil, err
 	}
 	owner := pubkey.Address()
-	filter = insertOwner(sdk.AccAddress(owner), filter)
+	filter = insertOwner(sdk.AccAddress(owner), filter, checkOwner)
 
 	dbRes, err := mongodb.GetItem(filter)
 	if err != nil {
@@ -81,7 +81,7 @@ func getItem(path []string, k Keeper) ([]byte, error) {
 }
 
 // GetItems returns the item information
-func getItems(path []string, k Keeper) ([]byte, error) {
+func getItems(path []string, k Keeper, checkOwner bool) ([]byte, error) {
 	msg, pubkey, sigBytes, err := pathUnescape(path, k)
 	if err != nil {
 		return nil, err
@@ -97,7 +97,7 @@ func getItems(path []string, k Keeper) ([]byte, error) {
 		return nil, err
 	}
 	owner := pubkey.Address()
-	filter = insertOwner(sdk.AccAddress(owner), filter)
+	filter = insertOwner(sdk.AccAddress(owner), filter, checkOwner)
 
 	dbRes, err := mongodb.GetItems(filter)
 	if err != nil {
@@ -158,8 +158,8 @@ func (k Keeper) GetItemsOwner(filter bson.M) sdk.AccAddress {
 }
 
 // ItemExists checks if the key exists in the store
-func (k Keeper) ItemExists(iFil types.ItemFilter) bool {
-	filter := insertOwner(iFil.Owner, iFil.Filter)
+func (k Keeper) ItemExists(iFil types.ItemFilter, checkOwner bool) bool {
+	filter := insertOwner(iFil.Owner, iFil.Filter, checkOwner)
 	res, err := mongodb.GetItem(filter)
 	return err == nil && res.GotItemCount > 0
 }
