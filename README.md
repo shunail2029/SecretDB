@@ -104,6 +104,14 @@ go install ./cmd/secretdbd
 go install ./cmd/secretdbcli
 ```
 
+## 設定
+
+```$HOME/.secretdbd/config/app.toml```に以下を設定
+
+```bash
+mongodb-uri = "mongodb://localhost:27017"
+```
+
 ## MongoDBデータベース作成
 
 ```bash
