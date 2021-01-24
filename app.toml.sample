@@ -40,3 +40,6 @@ inter-block-cache = true
 # Default value is "mongodb://localhost:27017"
 # To speciry username and password, this URI should include them
 mongodb-uri = "mongodb://localhost:27017"
+
+is-child = true
+parent-address = "cosmos17p0ewfxze7ve6dhxttv25j53lgf7a5hxtenyy6"

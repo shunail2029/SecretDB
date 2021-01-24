@@ -110,6 +110,9 @@ go install ./cmd/secretdbcli
 
 ```bash
 mongodb-uri = "mongodb://localhost:27017"
+
+is-child = true
+parent-address = "cosmos..."
 ```
 
 ## MongoDBデータベース作成
