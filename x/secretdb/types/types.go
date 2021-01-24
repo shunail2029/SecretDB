@@ -20,11 +20,17 @@ var (
 
 // SetParentParams ...
 func SetParentParams(child bool, parentAddr string) error {
+	var err error
+
 	if child && parentAddr == "" {
 		return errors.New("parent address should be specified")
 	}
 
 	IsChild = child
-	ParentAccount = sdk.AccAddress(parentAddr)
+	ParentAccount, err = sdk.AccAddressFromBech32(parentAddr)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

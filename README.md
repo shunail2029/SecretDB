@@ -156,5 +156,5 @@ secretdbd gentx --name validator --keyring-backend test
 secretdbd collect-gentxs
 
 # 起動
-secretdbd start
+secretdbd start --rpc.laddr "tcp://0.0.0.0:26657"
 ```
