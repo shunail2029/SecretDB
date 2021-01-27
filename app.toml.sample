@@ -42,4 +42,4 @@ inter-block-cache = true
 mongodb-uri = "mongodb://localhost:27017"
 
 is-child = true
-parent-address = "cosmos17p0ewfxze7ve6dhxttv25j53lgf7a5hxtenyy6"
+operator-address = "cosmos17p0ewfxze7ve6dhxttv25j53lgf7a5hxtenyy6"

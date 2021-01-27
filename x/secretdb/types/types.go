@@ -8,26 +8,26 @@ import (
 
 // flags
 const (
-	FlagIsChild       = "is-child"
-	FlagParentAddress = "parent-address"
+	FlagIsChild         = "is-child"
+	FlagOperatorAddress = "operator-address"
 )
 
 // parent chain params
 var (
-	IsChild       bool
-	ParentAccount sdk.AccAddress
+	IsChild         bool
+	OperatorAccount sdk.AccAddress
 )
 
-// SetParentParams ...
-func SetParentParams(child bool, parentAddr string) error {
+// SetParams ...
+func SetParams(child bool, operatorAddr string) error {
 	var err error
 
-	if child && parentAddr == "" {
-		return errors.New("parent address should be specified")
+	if child && operatorAddr == "" {
+		return errors.New("operator address should be specified")
 	}
 
 	IsChild = child
-	ParentAccount, err = sdk.AccAddressFromBech32(parentAddr)
+	OperatorAccount, err = sdk.AccAddressFromBech32(operatorAddr)
 	if err != nil {
 		return err
 	}

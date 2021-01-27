@@ -17,7 +17,7 @@ func handleMsgStoreItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgStoreItem
 	isChild := types.IsChild
 
 	// check sender is parent chain
-	if isChild && !types.ParentAccount.Equals(msg.GetSigners()[0]) {
+	if isChild && !types.OperatorAccount.Equals(msg.GetSigners()[0]) {
 		return nil, errors.New("tx from parent chain is acceptable")
 	}
 

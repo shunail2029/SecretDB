@@ -88,8 +88,8 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application
 
 	// set config of parent chain
 	viper.SetDefault(types.FlagIsChild, false)
-	viper.SetDefault(types.FlagParentAddress, "")
-	err = types.SetParentParams(viper.GetBool(types.FlagIsChild), viper.GetString(types.FlagParentAddress))
+	viper.SetDefault(types.FlagOperatorAddress, "")
+	err = types.SetParams(viper.GetBool(types.FlagIsChild), viper.GetString(types.FlagOperatorAddress))
 	if err != nil {
 		panic(err)
 	}
