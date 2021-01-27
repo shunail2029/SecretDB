@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -86,10 +87,20 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application
 	viper.SetDefault(mongodb.FlagDBURI, "mongodb://localhost:27017")
 	mongodb.SetURI(viper.GetString(mongodb.FlagDBURI))
 
-	// set config of parent chain
+	// set config of master chain
 	viper.SetDefault(types.FlagIsChild, false)
-	viper.SetDefault(types.FlagOperatorAddress, "")
-	err = types.SetParams(viper.GetBool(types.FlagIsChild), viper.GetString(types.FlagOperatorAddress))
+	viper.SetDefault(types.FlagCLIHome, os.ExpandEnv("$HOME/.secretdbcli"))
+	viper.SetDefault(types.FlagGas, 200000)
+	err = types.SetParams(
+		viper.GetBool(types.FlagIsChild),
+		viper.GetString(types.FlagOperatorName),
+		viper.GetString(types.FlagOperatorAddress),
+		viper.GetString(types.FlagKeyringBackend),
+		viper.GetString(types.FlagCLIHome),
+		viper.GetUint64(types.FlagGas),
+		viper.GetString(types.FlagMasterURI),
+		viper.GetString(types.FlagMasterChainID),
+	)
 	if err != nil {
 		panic(err)
 	}

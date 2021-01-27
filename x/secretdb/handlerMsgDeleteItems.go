@@ -17,7 +17,7 @@ func handleMsgDeleteItems(ctx sdk.Context, k keeper.Keeper, msg types.MsgDeleteI
 	isChild := types.IsChild
 
 	// check sender is parent chain
-	if isChild && !types.OperatorAccount.Equals(msg.GetSigners()[0]) {
+	if isChild && !types.OperatorAddress.Equals(msg.GetSigners()[0]) {
 		return nil, errors.New("tx from parent chain is acceptable")
 	}
 
