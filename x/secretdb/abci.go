@@ -13,6 +13,13 @@ import (
 // BeginBlocker check for infraction evidence or downtime of validators
 // on every begin block
 func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) {
+	if !types.IsChild {
+		return
+	}
+
+	if ctx.BlockHeight() == 1 {
+		return
+	}
 	msg := mastertypes.NewMsgCreateBlockHash(types.OperatorAddress, ctx.ChainID(), ctx.BlockHeight()-1, ctx.BlockHeader().LastBlockId.Hash)
 	err := msg.ValidateBasic()
 	if err != nil {
