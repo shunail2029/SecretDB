@@ -27,7 +27,13 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 		return
 	}
 
-	sendTxToMaster([]sdk.Msg{msg}, k.Codec())
+	res, err := sendTxToMaster([]sdk.Msg{msg}, k.Codec())
+	if err == nil {
+		fmt.Println("recorded tx hash on master chain")
+		fmt.Println(res)
+	} else {
+		fmt.Println(err.Error())
+	}
 }
 
 // EndBlocker called every block, process inflation, update validator set.

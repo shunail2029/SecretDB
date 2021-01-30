@@ -2,6 +2,8 @@ package types
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+
+	mastertypes "github.com/shunail2029/SecretDB-master/x/secretdb/types"
 )
 
 // RegisterCodec registers concrete types on codec
@@ -14,6 +16,8 @@ func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(MsgDeleteItems{}, "secretdb/DeleteItems", nil)
 	// for bson.M
 	cdc.RegisterInterface((*interface{})(nil), nil)
+	// for recording tx hash on master chain
+	cdc.RegisterConcrete(mastertypes.MsgCreateBlockHash{}, "secretdb/CreateBlockHash", nil)
 }
 
 // ModuleCdc defines the module codec
