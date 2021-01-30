@@ -89,12 +89,14 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application
 
 	// set config of master chain
 	viper.SetDefault(types.FlagIsChild, false)
+	viper.SetDefault(types.KeyringPassword, "")
 	viper.SetDefault(types.FlagCLIHome, os.ExpandEnv("$HOME/.secretdbcli"))
 	viper.SetDefault(types.FlagGas, 200000)
 	err = types.SetParams(
 		viper.GetBool(types.FlagIsChild),
 		viper.GetString(types.FlagOperatorName),
 		viper.GetString(types.FlagKeyringBackend),
+		viper.GetString(types.FlagKeyringPassword),
 		viper.GetString(types.FlagCLIHome),
 		viper.GetUint64(types.FlagGas),
 		viper.GetString(types.FlagMasterURI),

@@ -1,15 +1,26 @@
 package cli
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
+	"net/url"
 	"os"
 
+	"github.com/ethereum/go-ethereum/crypto/secp256k1"
+	"github.com/shunail2029/SecretDB/x/secretdb/types"
 	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/crypto"
+	"golang.org/x/crypto/sha3"
 	"gopkg.in/yaml.v2"
 
+	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -71,4 +82,81 @@ func makeSignature(keybase keys.Keybase, name, passphrase string, msg []byte) (c
 		return nil, nil, err
 	}
 	return pubkey, sigBytes, nil
+}
+
+// GenerateSharedKey generates shared key with given pukey and privkey in specified keyring
+func GenerateSharedKey(pubkey crypto.PubKey) (types.SharedKey, error) {
+	kb, err := keys.NewKeyring(sdk.KeyringServiceName(), types.KeyringBackend, types.CLIHome, os.Stdin)
+	if err != nil {
+		return types.SharedKey{}, err
+	}
+	privkey, err := kb.ExportPrivateKeyObject(types.OperatorName, types.KeyringPassword)
+	if err != nil {
+		return types.SharedKey{}, err
+	}
+
+	x, y := secp256k1.DecompressPubkey(pubkey.Bytes())
+	if x == nil {
+		return types.SharedKey{}, errors.New("failed to decompress pubkey")
+	}
+	key, _ := secp256k1.S256().ScalarMult(x, y, privkey.Bytes())
+	if key == nil {
+		return types.SharedKey{}, errors.New("failed to multiply pubkey by privkey")
+	}
+	return sha3.Sum256(key.Bytes()), nil
+}
+
+// EncryptWithKey encrypts data with given shared key
+func EncryptWithKey(plainText []byte, key types.SharedKey) (cipherText []byte, err error) {
+	block, err := aes.NewCipher(key[:])
+	if err != nil {
+		return
+	}
+
+	cipherText = make([]byte, aes.BlockSize+len(plainText))
+	iv := cipherText[:aes.BlockSize]
+	_, err = io.ReadFull(rand.Reader, iv)
+	if err != nil {
+		return
+	}
+
+	stream := cipher.NewCTR(block, iv)
+	stream.XORKeyStream(cipherText[aes.BlockSize:], plainText)
+	return
+}
+
+// DecryptWithKey decrypts data with given shared key
+func DecryptWithKey(cipherText []byte, key types.SharedKey) (plainText []byte, err error) {
+	block, err := aes.NewCipher(key[:])
+	if err != nil {
+		return
+	}
+
+	plainText = make([]byte, len(cipherText)-aes.BlockSize)
+	iv := cipherText[:aes.BlockSize]
+	stream := cipher.NewCTR(block, iv)
+	stream.XORKeyStream(plainText, cipherText[aes.BlockSize:])
+	return
+}
+
+func encryptMsg(plainMsg []byte, cliCtx context.CLIContext, cdc *codec.Codec) (cipherMsg []byte, err error) {
+	// encrypt msg
+	res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", types.ModuleName, types.QueryGetOperatorPubkey), nil)
+	if err != nil {
+		return
+	}
+	var pubkeyStr string
+	cdc.MustUnmarshalJSON(res, &pubkeyStr)
+	pubkeyStr, err = url.PathUnescape(pubkeyStr)
+	if err != nil {
+		return
+	}
+	var pubkey crypto.PubKey
+	cdc.UnmarshalBinaryBare([]byte(pubkeyStr), &pubkey)
+	key, err := GenerateSharedKey(pubkey)
+	if err != nil {
+		return
+	}
+	cipherMsg, err = EncryptWithKey(plainMsg, key)
+	return
 }

@@ -8,6 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"go.mongodb.org/mongo-driver/bson"
 
+	"github.com/shunail2029/SecretDB/x/secretdb/client/cli"
 	"github.com/shunail2029/SecretDB/x/secretdb/keeper"
 	"github.com/shunail2029/SecretDB/x/secretdb/types"
 )
@@ -20,13 +21,26 @@ func handleMsgUpdateItems(ctx sdk.Context, k keeper.Keeper, msg types.MsgUpdateI
 	if isChild && !types.OperatorAddress.Equals(msg.GetSigners()[0]) {
 		return nil, errors.New("tx from parent chain is acceptable")
 	}
-
-	var filter, update bson.M
-	err := bson.UnmarshalExtJSON([]byte(msg.Filter), true, &filter)
+	// decrypt msg
+	key, err := cli.GenerateSharedKey(msg.Pubkey)
 	if err != nil {
 		return nil, err
 	}
-	err = bson.UnmarshalExtJSON([]byte(msg.Update), true, &update)
+	plainFilter, err := cli.DecryptWithKey(msg.Filter, key)
+	if err != nil {
+		return nil, err
+	}
+	plainUpdate, err := cli.DecryptWithKey(msg.Update, key)
+	if err != nil {
+		return nil, err
+	}
+
+	var filter, update bson.M
+	err = bson.UnmarshalExtJSON(plainFilter, true, &filter)
+	if err != nil {
+		return nil, err
+	}
+	err = bson.UnmarshalExtJSON(plainUpdate, true, &update)
 	if err != nil {
 		return nil, err
 	}

@@ -8,6 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"go.mongodb.org/mongo-driver/bson"
 
+	"github.com/shunail2029/SecretDB/x/secretdb/client/cli"
 	"github.com/shunail2029/SecretDB/x/secretdb/keeper"
 	"github.com/shunail2029/SecretDB/x/secretdb/types"
 )
@@ -21,8 +22,18 @@ func handleMsgStoreItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgStoreItem
 		return nil, errors.New("tx from parent chain is acceptable")
 	}
 
+	// decrypt msg
+	key, err := cli.GenerateSharedKey(msg.Pubkey)
+	if err != nil {
+		return nil, err
+	}
+	plainData, err := cli.DecryptWithKey(msg.Data, key)
+	if err != nil {
+		return nil, err
+	}
+
 	var data bson.M
-	err := bson.UnmarshalExtJSON([]byte(msg.Data), true, &data)
+	err = bson.UnmarshalExtJSON(plainData, true, &data)
 	if err != nil {
 		return nil, err
 	}

@@ -30,7 +30,19 @@ func GetCmdStoreItem(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			msg := types.NewMsgStoreItem(cliCtx.GetFromAddress(), args[0])
+
+			plainData := []byte(args[0])
+			cipherData, err := encryptMsg(plainData, cliCtx, cdc)
+			if err != nil {
+				return err
+			}
+
+			keyBaseInfo, err := txBldr.Keybase().Get(cliCtx.GetFromName())
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgStoreItem(cliCtx.GetFromAddress(), keyBaseInfo.GetPubKey(), cipherData)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -60,7 +72,24 @@ func GetCmdUpdateItem(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			msg := types.NewMsgUpdateItem(cliCtx.GetFromAddress(), args[0], args[1])
+
+			plainFilter := []byte(args[0])
+			plainUpdate := []byte(args[1])
+			cipherFilter, err := encryptMsg(plainFilter, cliCtx, cdc)
+			if err != nil {
+				return err
+			}
+			cipherUpdate, err := encryptMsg(plainUpdate, cliCtx, cdc)
+			if err != nil {
+				return err
+			}
+
+			keyBaseInfo, err := txBldr.Keybase().Get(cliCtx.GetFromName())
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdateItem(cliCtx.GetFromAddress(), keyBaseInfo.GetPubKey(), cipherFilter, cipherUpdate)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -90,7 +119,24 @@ func GetCmdUpdateItems(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			msg := types.NewMsgUpdateItems(cliCtx.GetFromAddress(), args[0], args[1])
+
+			plainFilter := []byte(args[0])
+			plainUpdate := []byte(args[1])
+			cipherFilter, err := encryptMsg(plainFilter, cliCtx, cdc)
+			if err != nil {
+				return err
+			}
+			cipherUpdate, err := encryptMsg(plainUpdate, cliCtx, cdc)
+			if err != nil {
+				return err
+			}
+
+			keyBaseInfo, err := txBldr.Keybase().Get(cliCtx.GetFromName())
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdateItems(cliCtx.GetFromAddress(), keyBaseInfo.GetPubKey(), cipherFilter, cipherUpdate)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -117,7 +163,18 @@ func GetCmdDeleteItem(cdc *codec.Codec) *cobra.Command {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			msg := types.NewMsgDeleteItem(cliCtx.GetFromAddress(), args[0])
+			plainFilter := []byte(args[0])
+			cipherFilter, err := encryptMsg(plainFilter, cliCtx, cdc)
+			if err != nil {
+				return err
+			}
+
+			keyBaseInfo, err := txBldr.Keybase().Get(cliCtx.GetFromName())
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgDeleteItem(cliCtx.GetFromAddress(), keyBaseInfo.GetPubKey(), cipherFilter)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -144,7 +201,18 @@ func GetCmdDeleteItems(cdc *codec.Codec) *cobra.Command {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			msg := types.NewMsgDeleteItems(cliCtx.GetFromAddress(), args[0])
+			plainFilter := []byte(args[0])
+			cipherFilter, err := encryptMsg(plainFilter, cliCtx, cdc)
+			if err != nil {
+				return err
+			}
+
+			keyBaseInfo, err := txBldr.Keybase().Get(cliCtx.GetFromName())
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgDeleteItems(cliCtx.GetFromAddress(), keyBaseInfo.GetPubKey(), cipherFilter)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
