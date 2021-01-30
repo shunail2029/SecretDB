@@ -27,24 +27,6 @@ SecretDB/
 ├── config.yml
 ├── go.mod
 ├── startup.sh : 初期化用スクリプト
-├── vue : フロントエンド（未実装）
-│   ├── README.md
-│   ├── babel.config.js
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── public
-│   │   ├── favicon.ico
-│   │   └── index.html
-│   ├── src
-│   │   ├── App.vue
-│   │   ├── main.js
-│   │   ├── router
-│   │   │   └── index.js
-│   │   ├── store
-│   │   │   └── index.js
-│   │   └── views
-│   │       └── Index.vue
-│   └── vue.config.js
 └── x
     ├── mongodb : mongo-driverのWrapper
     │   ├── connection.go : LocalのMongoDBとのコネクション管理
