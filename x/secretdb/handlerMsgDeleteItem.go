@@ -23,7 +23,7 @@ func handleMsgDeleteItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgDeleteIt
 	}
 
 	// decrypt msg
-	key, err := cli.GenerateSharedKey(msg.Pubkey)
+	key, err := cli.GenerateSharedKey(msg.Pubkey, nil, types.OperatorName, types.KeyringPassword, k.Codec())
 	if err != nil {
 		return nil, err
 	}

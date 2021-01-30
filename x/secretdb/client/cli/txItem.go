@@ -2,8 +2,10 @@ package cli
 
 import (
 	"bufio"
+	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/tendermint/tendermint/crypto/secp256k1"
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -32,17 +34,22 @@ func GetCmdStoreItem(cdc *codec.Codec) *cobra.Command {
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			plainData := []byte(args[0])
-			cipherData, err := encryptMsg(plainData, cliCtx, cdc)
+			kb := txBldr.Keybase()
+			cipherData, err := encryptMsg(plainData, cliCtx, kb, cdc)
 			if err != nil {
 				return err
 			}
 
-			keyBaseInfo, err := txBldr.Keybase().Get(cliCtx.GetFromName())
+			fmt.Println(cliCtx.GetFromName())
+			keyBaseInfo, err := kb.Get(cliCtx.GetFromName())
 			if err != nil {
 				return err
 			}
+			var pubkey secp256k1.PubKeySecp256k1
+			pk := keyBaseInfo.GetPubKey()
+			err = cdc.UnmarshalBinaryBare(pk.Bytes(), &pubkey)
 
-			msg := types.NewMsgStoreItem(cliCtx.GetFromAddress(), keyBaseInfo.GetPubKey(), cipherData)
+			msg := types.NewMsgStoreItem(cliCtx.GetFromAddress(), pubkey, cipherData)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -75,21 +82,25 @@ func GetCmdUpdateItem(cdc *codec.Codec) *cobra.Command {
 
 			plainFilter := []byte(args[0])
 			plainUpdate := []byte(args[1])
-			cipherFilter, err := encryptMsg(plainFilter, cliCtx, cdc)
+			kb := txBldr.Keybase()
+			cipherFilter, err := encryptMsg(plainFilter, cliCtx, kb, cdc)
 			if err != nil {
 				return err
 			}
-			cipherUpdate, err := encryptMsg(plainUpdate, cliCtx, cdc)
-			if err != nil {
-				return err
-			}
-
-			keyBaseInfo, err := txBldr.Keybase().Get(cliCtx.GetFromName())
+			cipherUpdate, err := encryptMsg(plainUpdate, cliCtx, kb, cdc)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateItem(cliCtx.GetFromAddress(), keyBaseInfo.GetPubKey(), cipherFilter, cipherUpdate)
+			keyBaseInfo, err := kb.Get(cliCtx.GetFromName())
+			if err != nil {
+				return err
+			}
+			var pubkey secp256k1.PubKeySecp256k1
+			pk := keyBaseInfo.GetPubKey()
+			err = cdc.UnmarshalBinaryBare(pk.Bytes(), &pubkey)
+
+			msg := types.NewMsgUpdateItem(cliCtx.GetFromAddress(), pubkey, cipherFilter, cipherUpdate)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -122,21 +133,25 @@ func GetCmdUpdateItems(cdc *codec.Codec) *cobra.Command {
 
 			plainFilter := []byte(args[0])
 			plainUpdate := []byte(args[1])
-			cipherFilter, err := encryptMsg(plainFilter, cliCtx, cdc)
+			kb := txBldr.Keybase()
+			cipherFilter, err := encryptMsg(plainFilter, cliCtx, kb, cdc)
 			if err != nil {
 				return err
 			}
-			cipherUpdate, err := encryptMsg(plainUpdate, cliCtx, cdc)
-			if err != nil {
-				return err
-			}
-
-			keyBaseInfo, err := txBldr.Keybase().Get(cliCtx.GetFromName())
+			cipherUpdate, err := encryptMsg(plainUpdate, cliCtx, kb, cdc)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateItems(cliCtx.GetFromAddress(), keyBaseInfo.GetPubKey(), cipherFilter, cipherUpdate)
+			keyBaseInfo, err := kb.Get(cliCtx.GetFromName())
+			if err != nil {
+				return err
+			}
+			var pubkey secp256k1.PubKeySecp256k1
+			pk := keyBaseInfo.GetPubKey()
+			err = cdc.UnmarshalBinaryBare(pk.Bytes(), &pubkey)
+
+			msg := types.NewMsgUpdateItems(cliCtx.GetFromAddress(), pubkey, cipherFilter, cipherUpdate)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -164,17 +179,21 @@ func GetCmdDeleteItem(cdc *codec.Codec) *cobra.Command {
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			plainFilter := []byte(args[0])
-			cipherFilter, err := encryptMsg(plainFilter, cliCtx, cdc)
+			kb := txBldr.Keybase()
+			cipherFilter, err := encryptMsg(plainFilter, cliCtx, kb, cdc)
 			if err != nil {
 				return err
 			}
 
-			keyBaseInfo, err := txBldr.Keybase().Get(cliCtx.GetFromName())
+			keyBaseInfo, err := kb.Get(cliCtx.GetFromName())
 			if err != nil {
 				return err
 			}
+			var pubkey secp256k1.PubKeySecp256k1
+			pk := keyBaseInfo.GetPubKey()
+			err = cdc.UnmarshalBinaryBare(pk.Bytes(), &pubkey)
 
-			msg := types.NewMsgDeleteItem(cliCtx.GetFromAddress(), keyBaseInfo.GetPubKey(), cipherFilter)
+			msg := types.NewMsgDeleteItem(cliCtx.GetFromAddress(), pubkey, cipherFilter)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -202,17 +221,21 @@ func GetCmdDeleteItems(cdc *codec.Codec) *cobra.Command {
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			plainFilter := []byte(args[0])
-			cipherFilter, err := encryptMsg(plainFilter, cliCtx, cdc)
+			kb := txBldr.Keybase()
+			cipherFilter, err := encryptMsg(plainFilter, cliCtx, kb, cdc)
 			if err != nil {
 				return err
 			}
 
-			keyBaseInfo, err := txBldr.Keybase().Get(cliCtx.GetFromName())
+			keyBaseInfo, err := kb.Get(cliCtx.GetFromName())
 			if err != nil {
 				return err
 			}
+			var pubkey secp256k1.PubKeySecp256k1
+			pk := keyBaseInfo.GetPubKey()
+			err = cdc.UnmarshalBinaryBare(pk.Bytes(), &pubkey)
 
-			msg := types.NewMsgDeleteItems(cliCtx.GetFromAddress(), keyBaseInfo.GetPubKey(), cipherFilter)
+			msg := types.NewMsgDeleteItems(cliCtx.GetFromAddress(), pubkey, cipherFilter)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err

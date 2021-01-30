@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/shunail2029/SecretDB/x/secretdb/types"
-	"github.com/tendermint/tendermint/crypto"
+	"github.com/tendermint/tendermint/crypto/secp256k1"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -17,10 +17,10 @@ import (
 var _ = strconv.Itoa(42)
 
 type storeItemRequest struct {
-	BaseReq rest.BaseReq   `json:"base_req"`
-	Owner   sdk.AccAddress `json:"owner"`
-	Pubkey  crypto.PubKey  `json:"pubkey"`
-	Data    []byte         `json:"data"`
+	BaseReq rest.BaseReq              `json:"base_req"`
+	Owner   sdk.AccAddress            `json:"owner"`
+	Pubkey  secp256k1.PubKeySecp256k1 `json:"pubkey"`
+	Data    []byte                    `json:"data"`
 }
 
 func storeItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -59,11 +59,11 @@ func storeItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 }
 
 type updateItemRequest struct {
-	BaseReq rest.BaseReq   `json:"base_req"`
-	Owner   sdk.AccAddress `json:"owner"`
-	Pubkey  crypto.PubKey  `json:"pubkey"`
-	Filter  []byte         `json:"filter"`
-	Update  []byte         `json:"update"`
+	BaseReq rest.BaseReq              `json:"base_req"`
+	Owner   sdk.AccAddress            `json:"owner"`
+	Pubkey  secp256k1.PubKeySecp256k1 `json:"pubkey"`
+	Filter  []byte                    `json:"filter"`
+	Update  []byte                    `json:"update"`
 }
 
 func updateItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -108,11 +108,11 @@ func updateItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 }
 
 type updateItemsRequest struct {
-	BaseReq rest.BaseReq   `json:"base_req"`
-	Owner   sdk.AccAddress `json:"owner"`
-	Pubkey  crypto.PubKey  `json:"pubkey"`
-	Filter  []byte         `json:"filter"`
-	Update  []byte         `json:"update"`
+	BaseReq rest.BaseReq              `json:"base_req"`
+	Owner   sdk.AccAddress            `json:"owner"`
+	Pubkey  secp256k1.PubKeySecp256k1 `json:"pubkey"`
+	Filter  []byte                    `json:"filter"`
+	Update  []byte                    `json:"update"`
 }
 
 func updateItemsHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -157,10 +157,10 @@ func updateItemsHandler(cliCtx context.CLIContext) http.HandlerFunc {
 }
 
 type deleteItemRequest struct {
-	BaseReq rest.BaseReq   `json:"base_req"`
-	Owner   sdk.AccAddress `json:"owner"`
-	Pubkey  crypto.PubKey  `json:"pubkey"`
-	Filter  []byte         `json:"filter"`
+	BaseReq rest.BaseReq              `json:"base_req"`
+	Owner   sdk.AccAddress            `json:"owner"`
+	Pubkey  secp256k1.PubKeySecp256k1 `json:"pubkey"`
+	Filter  []byte                    `json:"filter"`
 }
 
 func deleteItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -199,10 +199,10 @@ func deleteItemHandler(cliCtx context.CLIContext) http.HandlerFunc {
 }
 
 type deleteItemsRequest struct {
-	BaseReq rest.BaseReq   `json:"base_req"`
-	Owner   sdk.AccAddress `json:"owner"`
-	Pubkey  crypto.PubKey  `json:"pubkey"`
-	Filter  []byte         `json:"filter"`
+	BaseReq rest.BaseReq              `json:"base_req"`
+	Owner   sdk.AccAddress            `json:"owner"`
+	Pubkey  secp256k1.PubKeySecp256k1 `json:"pubkey"`
+	Filter  []byte                    `json:"filter"`
 }
 
 func deleteItemsHandler(cliCtx context.CLIContext) http.HandlerFunc {

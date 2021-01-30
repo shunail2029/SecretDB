@@ -21,6 +21,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client/debug"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -89,7 +90,7 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application
 
 	// set config of master chain
 	viper.SetDefault(types.FlagIsChild, false)
-	viper.SetDefault(types.KeyringPassword, "")
+	viper.SetDefault(types.KeyringPassword, keys.DefaultKeyPass)
 	viper.SetDefault(types.FlagCLIHome, os.ExpandEnv("$HOME/.secretdbcli"))
 	viper.SetDefault(types.FlagGas, 200000)
 	err = types.SetParams(

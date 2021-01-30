@@ -3,20 +3,20 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/tendermint/tendermint/crypto"
+	"github.com/tendermint/tendermint/crypto/secp256k1"
 )
 
 var _ sdk.Msg = &MsgStoreItem{}
 
 // MsgStoreItem is a message type to create item
 type MsgStoreItem struct {
-	Owner  sdk.AccAddress `json:"owner" yaml:"owner"`
-	Pubkey crypto.PubKey  `json:"pubkey" yaml:"pubkey"`
-	Data   []byte         `json:"data" yaml:"data"`
+	Owner  sdk.AccAddress            `json:"owner" yaml:"owner"`
+	Pubkey secp256k1.PubKeySecp256k1 `json:"pubkey" yaml:"pubkey"`
+	Data   []byte                    `json:"data" yaml:"data"`
 }
 
 // NewMsgStoreItem returns new MsgStoreItem
-func NewMsgStoreItem(owner sdk.AccAddress, pubkey crypto.PubKey, data []byte) MsgStoreItem {
+func NewMsgStoreItem(owner sdk.AccAddress, pubkey secp256k1.PubKeySecp256k1, data []byte) MsgStoreItem {
 	return MsgStoreItem{
 		Owner:  owner,
 		Pubkey: pubkey,

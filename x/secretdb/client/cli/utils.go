@@ -11,17 +11,19 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/ethereum/go-ethereum/crypto/secp256k1"
+	gethSecp256k1 "github.com/ethereum/go-ethereum/crypto/secp256k1"
 	"github.com/shunail2029/SecretDB/x/secretdb/types"
 	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/crypto"
+	"github.com/tendermint/tendermint/crypto/secp256k1"
 	"golang.org/x/crypto/sha3"
 	"gopkg.in/yaml.v2"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/crypto/keys"
+	cryptokeys "github.com/cosmos/cosmos-sdk/crypto/keys"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -68,10 +70,10 @@ func printOutput(toPrint interface{}, outputFormat string, indent bool) error {
 }
 
 // makeSignature builds a signature of (msg byte[])
-func makeSignature(keybase keys.Keybase, name, passphrase string, msg []byte) (crypto.PubKey, []byte, error) {
+func makeSignature(keybase cryptokeys.Keybase, name, passphrase string, msg []byte) (crypto.PubKey, []byte, error) {
 	if keybase == nil {
 		var err error
-		keybase, err = keys.NewKeyring(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), os.Stdin)
+		keybase, err = cryptokeys.NewKeyring(sdk.KeyringServiceName(), viper.GetString(flags.FlagKeyringBackend), viper.GetString(flags.FlagHome), os.Stdin)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -85,21 +87,29 @@ func makeSignature(keybase keys.Keybase, name, passphrase string, msg []byte) (c
 }
 
 // GenerateSharedKey generates shared key with given pukey and privkey in specified keyring
-func GenerateSharedKey(pubkey crypto.PubKey) (types.SharedKey, error) {
-	kb, err := keys.NewKeyring(sdk.KeyringServiceName(), types.KeyringBackend, types.CLIHome, os.Stdin)
+func GenerateSharedKey(pubkey secp256k1.PubKeySecp256k1, kb cryptokeys.Keybase, name, pass string, cdc *codec.Codec) (types.SharedKey, error) {
+	var err error
+	if kb == nil {
+		kb, err = cryptokeys.NewKeyring(sdk.KeyringServiceName(), types.KeyringBackend, types.CLIHome, os.Stdin)
+		if err != nil {
+			return types.SharedKey{}, err
+		}
+	}
+	pk, err := kb.ExportPrivateKeyObject(name, pass)
 	if err != nil {
 		return types.SharedKey{}, err
 	}
-	privkey, err := kb.ExportPrivateKeyObject(types.OperatorName, types.KeyringPassword)
+	var privkey secp256k1.PrivKeySecp256k1
+	err = cdc.UnmarshalBinaryBare(pk.Bytes(), &privkey)
 	if err != nil {
 		return types.SharedKey{}, err
 	}
 
-	x, y := secp256k1.DecompressPubkey(pubkey.Bytes())
+	x, y := gethSecp256k1.DecompressPubkey(pubkey[:])
 	if x == nil {
 		return types.SharedKey{}, errors.New("failed to decompress pubkey")
 	}
-	key, _ := secp256k1.S256().ScalarMult(x, y, privkey.Bytes())
+	key, _ := gethSecp256k1.S256().ScalarMult(x, y, privkey[:])
 	if key == nil {
 		return types.SharedKey{}, errors.New("failed to multiply pubkey by privkey")
 	}
@@ -139,8 +149,8 @@ func DecryptWithKey(cipherText []byte, key types.SharedKey) (plainText []byte, e
 	return
 }
 
-func encryptMsg(plainMsg []byte, cliCtx context.CLIContext, cdc *codec.Codec) (cipherMsg []byte, err error) {
-	// encrypt msg
+func encryptMsg(plainMsg []byte, cliCtx context.CLIContext, kb cryptokeys.Keybase, cdc *codec.Codec) (cipherMsg []byte, err error) {
+	// get operator's pubkey
 	res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", types.ModuleName, types.QueryGetOperatorPubkey), nil)
 	if err != nil {
 		return
@@ -151,9 +161,13 @@ func encryptMsg(plainMsg []byte, cliCtx context.CLIContext, cdc *codec.Codec) (c
 	if err != nil {
 		return
 	}
-	var pubkey crypto.PubKey
-	cdc.UnmarshalBinaryBare([]byte(pubkeyStr), &pubkey)
-	key, err := GenerateSharedKey(pubkey)
+	var pubkey secp256k1.PubKeySecp256k1
+	err = cdc.UnmarshalBinaryBare([]byte(pubkeyStr), &pubkey)
+	if err != nil {
+		return
+	}
+
+	key, err := GenerateSharedKey(pubkey, kb, cliCtx.GetFromName(), keys.DefaultKeyPass, cdc)
 	if err != nil {
 		return
 	}

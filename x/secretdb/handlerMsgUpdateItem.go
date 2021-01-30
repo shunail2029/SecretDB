@@ -23,7 +23,7 @@ func handleMsgUpdateItem(ctx sdk.Context, k keeper.Keeper, msg types.MsgUpdateIt
 	}
 
 	// decrypt msg
-	key, err := cli.GenerateSharedKey(msg.Pubkey)
+	key, err := cli.GenerateSharedKey(msg.Pubkey, nil, types.OperatorName, types.KeyringPassword, k.Codec())
 	if err != nil {
 		return nil, err
 	}

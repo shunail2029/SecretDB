@@ -3,20 +3,20 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/tendermint/tendermint/crypto"
+	"github.com/tendermint/tendermint/crypto/secp256k1"
 )
 
 var _ sdk.Msg = &MsgDeleteItem{}
 
 // MsgDeleteItem is a message type to delete item
 type MsgDeleteItem struct {
-	Owner  sdk.AccAddress `json:"owner" yaml:"owner"`
-	Pubkey crypto.PubKey  `json:"pubkey" yaml:"pubkey"`
-	Filter []byte         `json:"filter" yaml:"filter"`
+	Owner  sdk.AccAddress            `json:"owner" yaml:"owner"`
+	Pubkey secp256k1.PubKeySecp256k1 `json:"pubkey" yaml:"pubkey"`
+	Filter []byte                    `json:"filter" yaml:"filter"`
 }
 
 // NewMsgDeleteItem returns new MsgDeleteItem
-func NewMsgDeleteItem(owner sdk.AccAddress, pubkey crypto.PubKey, filter []byte) MsgDeleteItem {
+func NewMsgDeleteItem(owner sdk.AccAddress, pubkey secp256k1.PubKeySecp256k1, filter []byte) MsgDeleteItem {
 	return MsgDeleteItem{
 		Owner:  owner,
 		Pubkey: pubkey,

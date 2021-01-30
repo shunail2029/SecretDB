@@ -114,7 +114,7 @@ mongodb-uri = "mongodb://localhost:27017"
 is-child = true
 operator-name = "operator"
 keyring-backend = "test"
-keyring-password = ""
+keyring-password = "password of your keyring"
 master-uri = "tcp://192.168.0.1:26657"
 master-chainid = "test-master"
 ```
