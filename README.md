@@ -26,57 +26,63 @@ SecretDB/
 │       └── main.go
 ├── config.yml
 ├── go.mod
-├── startup.sh : 初期化用スクリプト
+├── init.sh : 初期化用スクリプト
 └── x
-    ├── mongodb : mongo-driverのWrapper
-    │   ├── connection.go : LocalのMongoDBとのコネクション管理
-    │   ├── query.go : MongoDBに対するクエリ関連
-    │   └── types.go : 結果格納用の構造体定義
-    └── secretdb : 本体
-        ├── abci.go
-        ├── client
-        │   ├── cli : secretcbcli
-        │   │   ├── query.go
-        │   │   ├── queryItem.go
-        │   │   ├── tx.go
-        │   │   ├── txItem.go
-        │   │   └── utils.go
-        │   └── rest : REST
-        │       ├── queryItem.go
-        │       ├── rest.go
-        │       └── txItem.go
-        ├── genesis.go
-        ├── handler.go : メッセージハンドラ
-        ├── handlerMsgDeleteItem.go
-        ├── handlerMsgDeleteItems.go
-        ├── handlerMsgStoreItem.go
-        ├── handlerMsgUpdateItem.go
-        ├── handlerMsgUpdateItems.go
-        ├── keeper : データベースとのやり取りを管理
-        │   ├── item.go
-        │   ├── keeper.go
-        │   ├── params.go
-        │   └── querier.go
-        ├── module.go
-        ├── spec
-        │   └── README.md
-        └── types : 構造体等の定義
-            ├── MsgDeleteItem.go
-            ├── MsgDeleteItems.go
-            ├── MsgStoreItem.go
-            ├── MsgUpdateItem.go
-            ├── MsgUpdateItems.go
-            ├── TypeItem.go
-            ├── codec.go
-            ├── errors.go
-            ├── events.go
-            ├── expected_keepers.go
-            ├── genesis.go
-            ├── key.go
-            ├── msg.go
-            ├── params.go
-            ├── querier.go
-            └── types.go
+├── mongodb : mongo-driverのWrapper
+│   ├── connection.go : LocalのMongoDBとのコネクション管理
+│   ├── params.go
+│   ├── query.go : MongoDBに対するクエリ関連
+│   └── types.go : 結果格納用の構造体定義
+└── secretdb : 本体
+    ├── abci.go
+    ├── client
+    │   ├── cli : secretcbcli
+    │   │   ├── query.go
+    │   │   ├── queryItem.go
+    │   │   ├── queryOperatorPubkey.go
+    │   │   ├── tx.go
+    │   │   ├── txItem.go
+    │   │   └── utils.go
+    │   └── rest : REST
+    │       ├── queryItem.go
+    │       ├── queryOperatorPubkey.go
+    │       ├── rest.go
+    │       └── txItem.go
+    ├── genesis.go
+    ├── handler.go : メッセージハンドラ
+    ├── handlerMsgDeleteItem.go
+    ├── handlerMsgDeleteItems.go
+    ├── handlerMsgStoreItem.go
+    ├── handlerMsgUpdateItem.go
+    ├── handlerMsgUpdateItems.go
+    ├── keeper : データベースとのやり取りを管理
+    │   ├── item.go
+    │   ├── keeper.go
+    │   ├── operatorPubkey.go
+    │   ├── params.go
+    │   ├── querier.go
+    │   └── utils.go
+    ├── module.go
+    ├── spec
+    │   └── README.md
+    ├── types : 構造体等の定義
+    │   ├── codec.go
+    │   ├── errors.go
+    │   ├── events.go
+    │   ├── expected_keepers.go
+    │   ├── genesis.go
+    │   ├── key.go
+    │   ├── msg.go
+    │   ├── msgDeleteItem.go
+    │   ├── msgDeleteItems.go
+    │   ├── msgStoreItem.go
+    │   ├── msgUpdateItem.go
+    │   ├── msgUpdateItems.go
+    │   ├── params.go
+    │   ├── querier.go
+    │   ├── typeItem.go
+    │   └── types.go
+    └── utils.go
 ```
 
 ## インストール
