@@ -2,7 +2,6 @@ package cli
 
 import (
 	"bufio"
-	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
@@ -40,7 +39,6 @@ func GetCmdStoreItem(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			fmt.Println(cliCtx.GetFromName())
 			keyBaseInfo, err := kb.Get(cliCtx.GetFromName())
 			if err != nil {
 				return err
