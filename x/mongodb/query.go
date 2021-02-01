@@ -18,6 +18,7 @@ func StoreItem(document interface{}) (StoreItemResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	c := newConnection(ctx)
+	defer c.clt.Disconnect(ctx)
 
 	_, err := c.collection(itemCollection).InsertOne(context.Background(), document)
 	if err != nil {
@@ -34,6 +35,7 @@ func StoreItems(documents []interface{}) (StoreItemResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	c := newConnection(ctx)
+	defer c.clt.Disconnect(ctx)
 
 	res, err := c.collection(itemCollection).InsertMany(context.Background(), documents)
 	if err != nil {
@@ -50,6 +52,7 @@ func GetItem(filter interface{}) (GetItemResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	c := newConnection(ctx)
+	defer c.clt.Disconnect(ctx)
 
 	var res bson.M
 	err := c.collection(itemCollection).FindOne(context.Background(), filter).Decode(&res)
@@ -74,6 +77,7 @@ func GetItems(filter interface{}) (GetItemResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	c := newConnection(ctx)
+	defer c.clt.Disconnect(ctx)
 
 	cursor, err := c.collection(itemCollection).Find(context.Background(), filter)
 	if err == mongo.ErrNoDocuments {
@@ -101,6 +105,7 @@ func UpdateItem(filter interface{}, update interface{}) (UpdateItemResult, error
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	c := newConnection(ctx)
+	defer c.clt.Disconnect(ctx)
 
 	res, err := c.collection(itemCollection).UpdateOne(context.Background(), filter, update)
 	if err != nil {
@@ -119,6 +124,7 @@ func UpdateItems(filter interface{}, update interface{}) (UpdateItemResult, erro
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	c := newConnection(ctx)
+	defer c.clt.Disconnect(ctx)
 
 	res, err := c.collection(itemCollection).UpdateMany(context.Background(), filter, update)
 	if err != nil {
@@ -137,6 +143,7 @@ func DeleteItem(filter interface{}) (DeleteItemResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	c := newConnection(ctx)
+	defer c.clt.Disconnect(ctx)
 
 	res, err := c.collection(itemCollection).DeleteOne(context.Background(), filter)
 	if err != nil {
@@ -153,6 +160,7 @@ func DeleteItems(filter interface{}) (DeleteItemResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	c := newConnection(ctx)
+	defer c.clt.Disconnect(ctx)
 
 	res, err := c.collection(itemCollection).DeleteMany(context.Background(), filter)
 	if err != nil {
